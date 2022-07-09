@@ -221,6 +221,12 @@ static struct token *next_token(void) {
     return token_p;
 }
 
+static struct token *current_token(void) {
+    assert(tokens_index < MAX_TOKENS);
+
+    return token_p;
+}
+
 static struct token *reset_tokens(void) {
     tokens_index = 0;
     token_p = &tokens[tokens_index];
