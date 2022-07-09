@@ -237,7 +237,20 @@ static void consume_token(enum token_kind kind) {
 
 // type_specifier: "void" | "char" | "int" | "long" 
 static struct AST *parse_type_specifier() {
-    
+    struct AST *ast;
+
+    if (lookahead(1) == TK_KW_VOID) {
+        ast = create_leaf("TK_VOID", next_token()->lexeme);
+    } else if (lookahead(1) == TK_KW_CHAR) {
+        ast = create_leaf("TK_CHAR", next_token()->lexeme);
+    } else if (lookahead(1) == TK_KW_INT) {
+        ast = create_leaf("TK_INT", next_token()->lexeme);
+    } else if (lookahead(1) == TK_KW_LONG) {
+        ast = create_leaf("TK_LONG", next_token()->lexeme);
+    } else {
+        parse_error();
+    }
+    return ast;
 }
 
 // declarator: IDENTIFIER | IDENTIFIER "(" ")" 
