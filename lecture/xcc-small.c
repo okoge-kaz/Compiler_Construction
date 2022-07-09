@@ -235,7 +235,7 @@ static void consume_token(enum token_kind kind) {
     }
 }
 
-// type_specifier: "void" | "int" | "char" | "long" 
+// type_specifier: "void" | "char" | "int" | "long" 
 static struct AST *parse_type_specifier() {
     
 }
