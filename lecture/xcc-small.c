@@ -295,6 +295,15 @@ static struct AST *parse_declarator() {
 }
 
 // statement
+/*
+    statement:
+        IDENTIFIER ":" |
+        "if" "(" expression ")" statement ("else" statement)? |
+        "while" "(" expression ")" statement |
+        "goto IDENTIFIER ";" |
+        "return" expression ";" |
+        ( expression )? ";" 
+*/
 static struct AST *parse_statement() {
 
 }
