@@ -294,6 +294,11 @@ static struct AST *parse_declarator() {
     return ast;
 }
 
+// statement
+static struct AST *parse_statement() {
+
+}
+
 // compound_statement: "{" (type_specifier declarator ";")*  ( statement )*  "}"
 static struct AST *parse_compound_statement() {
 }
