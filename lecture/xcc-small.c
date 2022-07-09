@@ -279,21 +279,21 @@ static struct AST *parse_translation_unit(void) {
             case TK_KW_CHAR:
             case TK_KW_VOID:
                 // parse_type_specifier などのコードを書く
-                ast1 = parse_type_specifier ();
-                ast2 = parse_declarator ();
+                ast1 = parse_type_specifier();
+                ast2 = parse_declarator();
                 switch (lookahead(1)) {
                     case ';':
                         consume_token(';');
                         ast3 = create_AST(";", 0);
                         break;
                     case '{':
-                        ast3 = parse_compound_statement ();
+                        ast3 = parse_compound_statement();
                         break;
                     default:
                         parse_error();
                         break;
                 }
-                ast = add_AST (ast, 3, ast1, ast2, ast3);
+                ast = add_AST(ast, 3, ast1, ast2, ast3);
                 break;
             default:
                 goto loop_exit;
