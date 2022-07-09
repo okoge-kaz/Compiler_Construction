@@ -246,13 +246,17 @@ static struct AST *parse_type_specifier() {
     struct AST *ast;
 
     if (lookahead(1) == TK_KW_VOID) {
-        ast = create_leaf("TK_VOID", next_token()->lexeme);
+        consume_token(TK_KW_VOID);
+        ast = create_AST("TK_VOID", 0);
     } else if (lookahead(1) == TK_KW_CHAR) {
-        ast = create_leaf("TK_CHAR", next_token()->lexeme);
+        consume_token(TK_KW_CHAR);
+        ast = create_AST("TK_CHAR", 0);
     } else if (lookahead(1) == TK_KW_INT) {
-        ast = create_leaf("TK_INT", next_token()->lexeme);
+        consume_token(TK_KW_INT);
+        ast = create_AST("TK_INT", 0);
     } else if (lookahead(1) == TK_KW_LONG) {
-        ast = create_leaf("TK_LONG", next_token()->lexeme);
+        consume_token(TK_KW_LONG);
+        ast = create_AST("TK_LONG", 0);
     } else {
         parse_error();
     }
