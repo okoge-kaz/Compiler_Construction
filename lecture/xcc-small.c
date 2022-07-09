@@ -294,6 +294,16 @@ static struct AST *parse_declarator() {
     return ast;
 }
 
+// primary: INTEGER | CHARACTER | STRING | IDENTIFIER | "(" expression ")" 
+static struct AST *parse_primary() {
+    
+}
+
+// expression: primary ( "(" ")" )? 
+static struct AST *parse_expression() {
+
+}
+
 // statement
 /*
     statement:
