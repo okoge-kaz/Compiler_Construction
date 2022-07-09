@@ -115,13 +115,11 @@ static int tokens_index = 0;
 static struct token *token_p;  // for parsing
 
 /* ------------------------------------------------------- */
-static void
-print_nspace(int n) {
+static void print_nspace(int n) {
     printf("%*s", n, "");
 }
 
-static void
-printf_ns(int n, const char *format, ...) {
+static void printf_ns(int n, const char *format, ...) {
     va_list arg;
     print_nspace(n * 4);  // 空文字列をn*4幅で印字
     va_start(arg, format);
@@ -129,8 +127,7 @@ printf_ns(int n, const char *format, ...) {
     va_end(arg);
 }
 
-static struct AST *
-create_AST(char *ast_type, int num_child, ...) {
+static struct AST *create_AST(char *ast_type, int num_child, ...) {
     va_list ap;
     struct AST *ast;
     ast = malloc(sizeof(struct AST));
@@ -158,8 +155,7 @@ create_AST(char *ast_type, int num_child, ...) {
     return ast;
 }
 
-static struct AST *
-create_leaf(char *ast_type, char *lexeme) {
+static struct AST *create_leaf(char *ast_type, char *lexeme) {
     struct AST *ast;
     ast = malloc(sizeof(struct AST));
     ast->parent = NULL;
@@ -171,8 +167,7 @@ create_leaf(char *ast_type, char *lexeme) {
     return ast;
 }
 
-static struct AST *
-add_AST(struct AST *ast, int num_child, ...) {
+static struct AST *add_AST(struct AST *ast, int num_child, ...) {
     va_list ap;
     int i, start = ast->num_child;
     ast->num_child += num_child;
@@ -191,8 +186,7 @@ add_AST(struct AST *ast, int num_child, ...) {
     return ast;
 }
 
-static void
-show_AST(struct AST *ast, int depth) {
+static void show_AST(struct AST *ast, int depth) {
     int i;
     print_nspace(depth);
     if (!strcmp(ast->ast_type, "TK_ID") || !strcmp(ast->ast_type, "TK_INT") || !strcmp(ast->ast_type, "TK_CHAR") || !strcmp(ast->ast_type, "TK_STRING")) {
@@ -210,35 +204,30 @@ show_AST(struct AST *ast, int depth) {
 /* ------------------------------------------------------- */
 // 構文解析
 
-static void
-parse_error(void) {
+static void parse_error(void) {
     fprintf(stderr, "parse error (%d-%d): %s (%s)\n",
             token_p->offset_begin, token_p->offset_end,
             token_kind_string[token_p->kind], token_p->lexeme);
     exit(1);
 }
 
-static int
-lookahead(int i) {
+static int lookahead(int i) {
     return tokens[tokens_index + i - 1].kind;
 }
 
-static struct token *
-next_token(void) {
+static struct token *next_token(void) {
     token_p = &tokens[++tokens_index];
     assert(tokens_index < MAX_TOKENS);
     return token_p;
 }
 
-static struct token *
-reset_tokens(void) {
+static struct token *reset_tokens(void) {
     tokens_index = 0;
     token_p = &tokens[tokens_index];
     return token_p;
 }
 
-static void
-consume_token(enum token_kind kind) {
+static void consume_token(enum token_kind kind) {
     if (lookahead(1) == kind) {
         next_token();
     } else {
@@ -247,8 +236,7 @@ consume_token(enum token_kind kind) {
 }
 
 // translation_unit: ( type_specifier declarator ( ";" | compound_statement ))*
-static struct AST *
-parse_translation_unit(void) {
+static struct AST *parse_translation_unit(void) {
     struct AST *ast, *ast1, *ast2, *ast3;
 
     ast = create_AST("translation_unit", 0);
@@ -286,8 +274,7 @@ loop_exit:
 /* ------------------------------------------------------- */
 // 字句解析
 
-static char *
-map_file(char *filename) {
+static char *map_file(char *filename) {
     struct stat sbuf;
     char *ptr;
 
@@ -312,8 +299,7 @@ map_file(char *filename) {
     return ptr;
 }
 
-static void
-my_regcomp(regex_t *regex_p, char *pattern) {
+static void my_regcomp(regex_t *regex_p, char *pattern) {
     static char buf[BUFSIZ];
     int ret = regcomp(regex_p, pattern, REG_EXTENDED);
 
@@ -324,8 +310,7 @@ my_regcomp(regex_t *regex_p, char *pattern) {
     }
 }
 
-static int
-my_regexec(regex_t *regex_p, char *str, regmatch_t *regmatch_p) {
+static int my_regexec(regex_t *regex_p, char *str, regmatch_t *regmatch_p) {
     int ret = regexec(regex_p, str, 1, regmatch_p, 0);
 #if 0
     if (ret == 0) {
@@ -338,8 +323,7 @@ my_regexec(regex_t *regex_p, char *str, regmatch_t *regmatch_p) {
     return ret;
 }
 
-static void *
-copy_string_region_int(char *s, int start, int end) {
+static void *copy_string_region_int(char *s, int start, int end) {
     int size = end - start;
     char *buf = malloc(size + 1);  // +1 for '\0'
     memcpy(buf, s + start, size);
@@ -347,8 +331,7 @@ copy_string_region_int(char *s, int start, int end) {
     return buf;
 }
 
-static void *
-copy_string_region_ptr(char *start, char *end) {
+static void *copy_string_region_ptr(char *start, char *end) {
     int size = end - start;
     char *buf = malloc(size + 1);  // +1 for '\0'
     memcpy(buf, start, size);
@@ -356,8 +339,7 @@ copy_string_region_ptr(char *start, char *end) {
     return buf;
 }
 
-static void *
-copy_string_region_regmatch(char *s, regmatch_t *regmatch_p) {
+static void *copy_string_region_regmatch(char *s, regmatch_t *regmatch_p) {
     return copy_string_region_int(s, regmatch_p->rm_so, regmatch_p->rm_eo);
 }
 
@@ -399,13 +381,11 @@ static int skip_whitespaces(char *ptr, int off) {
     return i;
 }
 
-static int
-strncmp_r(char *s1, char *s2) {
+static int strncmp_r(char *s1, char *s2) {
     return strncmp(s1, s2, strlen(s2));
 }
 
-static int
-check_kind_id(char *lexeme) {
+static int check_kind_id(char *lexeme) {
     if (!strcmp(lexeme, "char"))
         return TK_KW_CHAR;
     else if (!strcmp(lexeme, "else"))
@@ -428,8 +408,7 @@ check_kind_id(char *lexeme) {
         return TK_ID;
 }
 
-static int
-set_token_int(char *ptr, int begin, int end, int kind, int off) {
+static int set_token_int(char *ptr, int begin, int end, int kind, int off) {
     assert(tokens_index < MAX_TOKENS);
     struct token *token_p = &tokens[tokens_index++];
     assert(begin == 0);
@@ -443,8 +422,7 @@ set_token_int(char *ptr, int begin, int end, int kind, int off) {
     return off + end;
 }
 
-static int
-set_token_regmatch(char *ptr, regmatch_t *regmatch_p, int kind, int off) {
+static int set_token_regmatch(char *ptr, regmatch_t *regmatch_p, int kind, int off) {
     return set_token_int(ptr, regmatch_p->rm_so, regmatch_p->rm_eo, kind, off);
 }
 
@@ -622,8 +600,8 @@ int main(int argc, char *argv[]) {
     ptr = map_file(argv[1]);
     create_tokens(ptr);
     reset_tokens();
-    // dump_tokens ();    // 提出時はコメントアウトしておくこと
+    dump_tokens();  // 提出時はコメントアウトしておくこと
     ast = parse_translation_unit();
-    // show_AST (ast, 0); // 提出時はコメントアウトしておくこと
+    show_AST(ast, 0);  // 提出時はコメントアウトしておくこと
     unparse_AST(ast, 0);
 }
