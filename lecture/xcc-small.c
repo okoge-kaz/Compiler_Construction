@@ -302,14 +302,57 @@ static struct AST *parse_declarator() {
         "while" "(" expression ")" statement |
         "goto IDENTIFIER ";" |
         "return" expression ";" |
-        ( expression )? ";" 
+        ( expression )? ";"
 */
 static struct AST *parse_statement() {
-
 }
 
 // compound_statement: "{" (type_specifier declarator ";")*  ( statement )*  "}"
 static struct AST *parse_compound_statement() {
+    struct AST *ast, *ast1, *ast2, *ast3, *ast4;
+    create_AST("compound_statement", 0);
+
+    if (lookahead(1) == '{') {
+        consume_token('{');
+        ast1 = create_AST("{", 0);
+
+        // ( type_specifier declarator ";" ) *
+        int compound_statement_count_1 = 0;
+        while (lookahead(1) == TK_KW_VOID || lookahead(1) == TK_KW_CHAR || lookahead(1) == TK_KW_INT || lookahead(1) == TK_KW_LONG) {
+            struct AST *ast5, *ast6, *ast7;
+            ast5 = parse_type_specifier();
+            ast6 = parse_declarator();
+            consume_token(';');
+            ast7 = create_AST(";", 0);
+            compound_statement_count_1++;
+        }
+        // TODO: ast2 に ()* の0回以上の繰り返しを追加する
+
+        // ( statement ) *
+        int compound_statement_count_2 = 0;
+        while (1) {
+            if (lookahead(1) == '}') {
+                break;
+            } else {
+                ast3 = parse_statement();
+                compound_statement_count_2++;
+                // TODO: ast3 に ()* の0回以上の繰り返しを追加する
+            }
+        }
+
+        // "}"
+        if (lookahead(1) == '}') {
+            consume_token('}');
+            ast4 = create_AST("}", 0);
+        } else {
+            parse_error();
+        }
+
+        ast = add_AST(ast, 4, ast1, ast2, ast3, ast4);
+    } else {
+        parse_error();
+    }
+    return ast;
 }
 
 // translation_unit: ( type_specifier declarator ( ";" | compound_statement ))*
