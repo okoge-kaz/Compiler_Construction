@@ -262,6 +262,7 @@ static struct AST *parse_type_specifier() {
 // declarator: IDENTIFIER | IDENTIFIER "(" ")"
 static struct AST *parse_declarator() {
     struct AST *ast, *ast1, *ast2;
+    create_AST("declarator", 0);
 
     if (lookahead(1) == TK_ID) {
         ast1 = create_leaf("TK_ID", next_token()->lexeme);
@@ -276,11 +277,11 @@ static struct AST *parse_declarator() {
             assert(lookahead(1) == ';');
             ast4 = create_leaf(";", next_token()->lexeme);
 
-            ast = create_AST(ast, 4, ast1, ast2, ast3, ast4);
+            ast = add_AST(ast, 4, ast1, ast2, ast3, ast4);
 
         } else if (lookahead(1) == ';') {
             ast2 = create_leaf(";", next_token()->lexeme);
-            ast = create_AST(ast, 2, ast1, ast2);
+            ast = add_AST(ast, 2, ast1, ast2);
         } else {
             parse_error();
         }
