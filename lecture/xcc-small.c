@@ -247,16 +247,16 @@ static struct AST *parse_type_specifier() {
 
     if (lookahead(1) == TK_KW_VOID) {
         consume_token(TK_KW_VOID);
-        ast = create_AST("TK_VOID", 0);
+        ast = create_AST("TK_KW_VOID", 0);
     } else if (lookahead(1) == TK_KW_CHAR) {
         consume_token(TK_KW_CHAR);
-        ast = create_AST("TK_CHAR", 0);
+        ast = create_AST("TK_KW_CHAR", 0);
     } else if (lookahead(1) == TK_KW_INT) {
         consume_token(TK_KW_INT);
-        ast = create_AST("TK_INT", 0);
+        ast = create_AST("TK_KW_INT", 0);
     } else if (lookahead(1) == TK_KW_LONG) {
         consume_token(TK_KW_LONG);
-        ast = create_AST("TK_LONG", 0);
+        ast = create_AST("TK_KW_LONG", 0);
     } else {
         parse_error();
     }
