@@ -578,14 +578,12 @@ static void dump_tokens() {
     }
 }
 /* ------------------------------------------------------- */
-static void
-unparse_error(struct AST *ast) {
+static void unparse_error(struct AST *ast) {
     printf("something wrong: %s\n", ast->ast_type);
     exit(1);
 }
 
-static void
-unparse_AST(struct AST *ast, int depth) {
+static void unparse_AST(struct AST *ast, int depth) {
     int i;
     if (!strcmp(ast->ast_type, "translation_unit")) {
         for (i = 0; i < ast->num_child; i++) {
