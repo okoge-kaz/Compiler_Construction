@@ -2,7 +2,7 @@
 GCC_BIN=/usr/bin/
 
 # gcc compile options
-GCC_OPTIONS = -Wall -Wextra -Werror -Wshadow -fsanitize=address,undefined -g
+GCC_OPTIONS = -Wall -Wextra -Wshadow -fsanitize=address,undefined -g
 
 # command to compile c source file
 GCC=${GCC_BIN}gcc ${GCC_OPTIONS}
