@@ -259,14 +259,39 @@ static struct AST *parse_type_specifier() {
     return ast;
 }
 
-// declarator: IDENTIFIER | IDENTIFIER "(" ")" 
+// declarator: IDENTIFIER | IDENTIFIER "(" ")"
 static struct AST *parse_declarator() {
-    
+    struct AST *ast, *ast1, *ast2;
+
+    if (lookahead(1) == TK_ID) {
+        ast1 = create_leaf("TK_ID", next_token()->lexeme);
+        consume_token(TK_ID);
+
+        if (lookahead(1) == '(') {
+            struct AST *ast3, *ast4;
+
+            ast2 = create_leaf("(", next_token()->lexeme);
+            assert(lookahead(1) == ')');
+            ast3 = create_leaf(")", next_token()->lexeme);
+            assert(lookahead(1) == ';');
+            ast4 = create_leaf(";", next_token()->lexeme);
+
+            ast = create_AST(ast, 4, ast1, ast2, ast3, ast4);
+
+        } else if (lookahead(1) == ';') {
+            ast2 = create_leaf(";", next_token()->lexeme);
+            ast = create_AST(ast, 2, ast1, ast2);
+        } else {
+            parse_error();
+        }
+    } else {
+        parse_error();
+    }
+    return ast;
 }
 
 // compound_statement: "{" (type_specifier declarator ";")*  ( statement )*  "}"
 static struct AST *parse_compound_statement() {
-    
 }
 
 // translation_unit: ( type_specifier declarator ( ";" | compound_statement ))*
