@@ -243,20 +243,25 @@ static void consume_token(enum token_kind kind) {
 
 // type_specifier: "void" | "char" | "int" | "long"
 static struct AST *parse_type_specifier() {
-    struct AST *ast;
+    struct AST *ast, *ast1;
+    ast = create_AST("type_specifier", 0);
 
     if (lookahead(1) == TK_KW_VOID) {
         consume_token(TK_KW_VOID);
-        ast = create_AST("TK_KW_VOID", 0);
+        ast1 = create_AST("TK_KW_VOID", 0);
+        ast = add_AST(ast, 1, ast1);
     } else if (lookahead(1) == TK_KW_CHAR) {
         consume_token(TK_KW_CHAR);
-        ast = create_AST("TK_KW_CHAR", 0);
+        ast1 = create_AST("TK_KW_CHAR", 0);
+        ast = add_AST(ast, 1, ast1);
     } else if (lookahead(1) == TK_KW_INT) {
         consume_token(TK_KW_INT);
-        ast = create_AST("TK_KW_INT", 0);
+        ast1 = create_AST("TK_KW_INT", 0);
+        ast = add_AST(ast, 1, ast1);
     } else if (lookahead(1) == TK_KW_LONG) {
         consume_token(TK_KW_LONG);
-        ast = create_AST("TK_KW_LONG", 0);
+        ast1 = create_AST("TK_KW_LONG", 0);
+        ast = add_AST(ast, 1, ast1);
     } else {
         parse_error();
     }
@@ -269,7 +274,7 @@ static struct AST *parse_declarator() {
     ast = create_AST("declarator", 0);
 
     if (lookahead(1) == TK_ID) {
-        ast1 = create_AST("TK_ID", 0);
+        ast1 = create_AST("IDENTIFIER", 0);
         ast1->lexeme = next_token()->lexeme;
 
         if (lookahead(1) == '(') {
