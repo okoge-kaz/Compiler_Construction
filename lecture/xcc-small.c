@@ -888,7 +888,6 @@ static void unparse_AST(struct AST *ast, int depth) {
             : "{" ( type_specifier declarator ";" )* ( statement )* "}"
         */
         for (i = 0; i < ast->num_child; i++) {
-            printf_ns(depth, "");     // これなに？
             printf_ns(depth, "{\n");  // "{" ast->child[i]->ast_type == ";"
 
             // ( type_specifier declarator ";" )*
