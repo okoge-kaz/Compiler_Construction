@@ -882,10 +882,55 @@ static void unparse_AST(struct AST *ast, int depth) {
             }
             i += 2;
         }
+    } else if (!strcmp(ast->ast_type, "compound_statement")) {
         /*
-        TODO: Abstract Syntax Tree を展開する関数を実装
-          ここにコードを書く
-         */
+        compound_statement
+            : "{" ( type_specifier declarator ";" )* ( statement )* "}"
+        */
+        for (i = 0; i < ast->num_child; i++) {
+            printf_ns(depth, "");     // これなに？
+            printf_ns(depth, "{\n");  // "{" ast->child[i]->ast_type == ";"
+
+            // ( type_specifier declarator ";" )*
+            while (!strcmp(ast->child[i + 1]->ast_type,
+                           "type_specifier")) {             // type_specifier declarator ";"
+                unparse_AST(ast->child[i + 1], depth + 1);  // type_specifier
+                unparse_AST(ast->child[i + 2], depth + 1);  // declarator
+                printf(";\n");                              // ";" ast->child[i + 3]->ast_type == ";"
+                i += 3;
+            }
+            // ( statement )*
+            while (!strcmp(ast->child[i + 1]->ast_type, "statement")) {
+                unparse_AST(ast->child[i + 1], depth + 1);  // statement
+                i += 1;
+            }
+            // "}"
+            printf_ns(depth, "}\n");          // i++ されるので i + 1 をしない
+            assert(ast->num_child == i + 1);  // 1回しかforループは回らない
+        }
+
+    } else if (!strcmp(ast->ast_type, "statement")) {
+        /*
+        statement
+            : IDENTIFIER ":"
+            | "if" "(" expression ")" statement ("else" statement)?
+            | "while" "(" expression ")" statement
+            | "goto" IDENTIFIER ";"
+            | "return" (expression)? ";"
+            | (expression)? ";"
+        */
+        
+    } else if (!strcmp(ast->ast_type, "expression")) {
+        /*
+        expression
+            : assignment_expression
+            | expression "," assignment_expression
+        */
+        unparse_AST(ast->child[0], depth);
+        for (i = 1; i < ast->num_child; i++) {
+            printf(", ");
+            unparse_AST(ast->child[i], depth);
+        }
     } else {
         unparse_error(ast);
     }
