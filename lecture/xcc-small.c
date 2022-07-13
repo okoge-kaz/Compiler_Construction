@@ -275,7 +275,8 @@ static struct AST *parse_declarator() {
     create_AST("declarator", 0);
 
     if (lookahead(1) == TK_ID) {
-        ast1 = create_leaf("TK_ID", next_token()->lexeme);
+        ast1 = create_AST("TK_ID", 0);
+        ast1->lexeme = next_token()->lexeme;
 
         if (lookahead(1) == '(') {
             ast2 = create_AST("(", 0);
@@ -320,7 +321,8 @@ static struct AST *parse_primary() {
         ast = add_AST(ast, 1, ast1);
     } else if (lookahead(1) == TK_ID) {  // primary : IDENTIFIER
 
-        ast1 = create_leaf("TK_ID", next_token()->lexeme);
+        ast1 = create_AST("TK_ID", 0);
+        ast1->lexeme = next_token()->lexeme;
         ast = add_AST(ast, 1, ast1);
     } else if (lookahead(1) == '(') {  // primary : "(" expression ")"
 
@@ -379,7 +381,8 @@ static struct AST *parse_statement() {
     if (lookahead(1) == TK_ID) {  // IDENTIFIER ":"
         struct AST *ast1, *ast2;
 
-        ast1 = create_leaf("TK_ID", next_token()->lexeme);  // 変数名なため create_leafでよい？
+        ast1 = create_AST("TK_ID", 0);
+        ast1->lexeme = next_token()->lexeme;
         assert(lookahead(1) == ':');
         ast2 = create_AST(":", 0);
         consume_token(':');
@@ -435,7 +438,8 @@ static struct AST *parse_statement() {
         ast1 = create_AST("TK_KW_GOTO", 0);
         consume_token(TK_KW_GOTO);
         assert(lookahead(1) == TK_ID);
-        ast2 = create_leaf("TK_ID", next_token()->lexeme);  // 変数名なため create_leafでよい？
+        ast2 = create_AST("TK_ID", 0);
+        ast2->lexeme = next_token()->lexeme;
         assert(lookahead(1) == ';');
         ast3 = create_AST(";", 0);
         consume_token(';');
