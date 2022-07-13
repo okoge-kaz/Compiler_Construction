@@ -274,7 +274,7 @@ static struct AST *parse_declarator() {
     ast = create_AST("declarator", 0);
 
     if (lookahead(1) == TK_ID) {
-        ast1 = create_AST("IDENTIFIER", 0);
+        ast1 = create_AST("IK_ID", 0);
         ast1->lexeme = next_token()->lexeme;
 
         if (lookahead(1) == '(') {
@@ -926,7 +926,7 @@ static void unparse_AST(struct AST *ast, int depth) {
             | "return" (expression)? ";"
             | (expression)? ";"
         */
-        if (!strcmp(ast->child[0]->ast_type, "IDENTIFIER")) {
+        if (!strcmp(ast->child[0]->ast_type, "IK_ID")) {
             printf_ns(depth, "%s:", ast->child[0]->lexeme);  // TODO: TK_ID の挙動と合わせて検討
         } else if (!strcmp(ast->child[0]->ast_type, "compound_statement")) {
             unparse_AST(ast->child[0], depth);
