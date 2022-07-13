@@ -26,6 +26,12 @@ static void show_AST(struct AST *ast, int depth);
 static void unparse_AST(struct AST *ast, int depth);
 
 static struct AST *parse_translation_unit(void);
+static struct AST *parse_type_specifier(void);
+static struct AST *parse_declarator(void);
+static struct AST *parse_primary(void);
+static struct AST *parse_expression(void);
+static struct AST *parse_statement(void);
+static struct AST *parse_compound_statement(void);
 
 static char *map_file(char *filename);
 static void my_regcomp(regex_t *regex_p, char *pattern);
