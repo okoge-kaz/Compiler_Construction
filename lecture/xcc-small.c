@@ -1001,6 +1001,10 @@ int main(int argc, char *argv[]) {
     reset_tokens();
     dump_tokens();  // 提出時はコメントアウトしておくこと
     ast = parse_translation_unit();
+
+    printf("\nshow_AST(ast):\n\n");
     show_AST(ast, 0);  // 提出時はコメントアウトしておくこと
+    printf("\nshow_AST end\n\n");
+
     unparse_AST(ast, 0);
 }
