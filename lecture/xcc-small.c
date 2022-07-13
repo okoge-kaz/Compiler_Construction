@@ -918,13 +918,57 @@ static void unparse_AST(struct AST *ast, int depth) {
             | "return" (expression)? ";"
             | (expression)? ";"
         */
-        
+        if (!strcmp(ast->child[0]->ast_type, "IDENTIFIER")) {
+            printf_ns(depth, "%s:", ast->child[0]->lexeme);  // TODO: TK_ID の挙動と合わせて検討
+        } else if (!strcmp(ast->child[0]->ast_type, "compound_statement")) {
+            unparse_AST(ast->child[0],depth);
+        }else if (!strcmp(ast->child[0]->ast_type, "if")) {
+            printf_ns(depth, "if (");               // ast->child[0], ast->child[1]
+            unparse_AST(ast->child[2], depth + 1);  // expression (補足: if ( expression ) の expression )
+            printf_ns(depth, ") {\n");              // if 文なので { は必要 ast->child[3]
+
+            unparse_AST(ast->child[4], depth + 1);  // statement
+            printf_ns(depth, "}\n");                // } if 文の最後の }
+
+            if (ast->num_child == 6) {
+                printf_ns(depth, "else {\n");           // else 文なので { は必要  ast->child[5]
+                unparse_AST(ast->child[6], depth + 1);  // statement ast->child[6]
+                printf_ns(depth, "}\n");                // } else 文の最後の }
+            }
+        } else if (!strcmp(ast->child[0]->ast_type, "while")) {
+            printf_ns(depth, "while (");            // ast->child[0], ast->child[1]
+            unparse_AST(ast->child[2], depth + 1);  // expression ast->child[2]
+
+            printf_ns(depth, ") {\n");              // ast->child[3] while 文の最初の {
+            unparse_AST(ast->child[4], depth + 1);  // statement ast->child[4]
+            printf_ns(depth, "}\n");                // while 文の最後の }
+        } else if (!strcmp(ast->child[0]->ast_type, "goto")) {
+            printf_ns(depth, "goto");                // ast->child[0]
+            printf_nspace(4);                        // 空白
+            printf("%s;\n", ast->child[1]->lexeme);  // ast->child[1] IDENTIFIER
+
+        } else if (!strcmp(ast->child[0]->ast_type, "return")) {
+            printf_ns(depth, "return");
+            if (ast->num_child > 2) {  // return ; でない場合 -> return expression ;
+                printf_nspace(4);
+                unparse_AST(ast->child[1], depth + 1);
+            }
+            printf(";\n");  // return 文の最後の ;なので printf_ns でなくてよい
+        } else if (!strcmp(ast->child[0]->ast_type, ";")) {
+            printf_ns(depth, ";\n");
+        } else if (!strcmp(ast->child[0]->ast_type, "expression")) {
+            unparse_AST(ast->child[0], depth + 1);// TODO: expression に渡す depth は意味がないので渡す値を考える
+            printf(";\n");
+        } else {
+            unparse_error(ast);
+        }
     } else if (!strcmp(ast->ast_type, "expression")) {
         /*
         expression
             : assignment_expression
             | expression "," assignment_expression
         */
+       // expression は printf_ns しない方がよい -> 文中で突然改行されると困るので
         unparse_AST(ast->child[0], depth);
         for (i = 1; i < ast->num_child; i++) {
             printf(", ");
