@@ -973,8 +973,7 @@ static void unparse_AST(struct AST *ast, int depth) {
     } else if (!strcmp(ast->ast_type, "expression")) {
         /*
         expression
-            : assignment_expression
-            | expression "," assignment_expression
+            : primary ( "(" ")" )?
         */
         // expression は printf_ns しない方がよい -> 文中で突然改行されると困るので
         unparse_AST(ast->child[0], depth);
