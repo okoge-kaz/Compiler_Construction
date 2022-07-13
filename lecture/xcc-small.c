@@ -944,13 +944,13 @@ static void unparse_AST(struct AST *ast, int depth) {
             printf_ns(depth, "}\n");                // while 文の最後の }
         } else if (!strcmp(ast->child[0]->ast_type, "goto")) {
             printf_ns(depth, "goto");                // ast->child[0]
-            printf_nspace(4);                        // 空白
+            print_nspace(4);                        // 空白
             printf("%s;\n", ast->child[1]->lexeme);  // ast->child[1] IDENTIFIER
 
         } else if (!strcmp(ast->child[0]->ast_type, "return")) {
             printf_ns(depth, "return");
             if (ast->num_child > 2) {  // return ; でない場合 -> return expression ;
-                printf_nspace(4);
+                print_nspace(4);
                 unparse_AST(ast->child[1], depth + 1);
             }
             printf(";\n");  // return 文の最後の ;なので printf_ns でなくてよい
