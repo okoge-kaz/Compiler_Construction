@@ -2,3 +2,4 @@ a.out
 .venv
 *.dSYM
 lecture/xcc-small
+lecture/out
