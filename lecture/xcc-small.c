@@ -982,6 +982,10 @@ static void unparse_AST(struct AST *ast, int depth) {
             unparse_AST(ast->child[i], depth);
         }
     } else if (!strcmp(ast->ast_type, "primary")) {
+        /*
+        primary
+            : INTEGER | CHARACTER | STRING | IDENTIFIER | "(" expression ")"
+        */
     } else if (!strcmp(ast->ast_type, "type_specifier")) {
     } else if (!strcmp(ast->ast_type, "declarator")) {
     } else {
