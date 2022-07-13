@@ -274,8 +274,9 @@ static struct AST *parse_declarator() {
     ast = create_AST("declarator", 0);
 
     if (lookahead(1) == TK_ID) {
-        ast1 = create_AST("IK_ID", 0);
-        ast1->lexeme = next_token()->lexeme;
+        ast1 = create_AST("TK_ID", 0);
+        ast1->lexeme = token_p->lexeme;
+        consume_token(TK_ID);
 
         if (lookahead(1) == '(') {
             ast2 = create_AST("(", 0);
@@ -303,25 +304,30 @@ static struct AST *parse_primary() {
     if (lookahead(1) == TK_INT) {  // primary : INTEGER
 
         ast1 = create_AST("TK_INT", 0);
+        ast1->lexeme = token_p->lexeme;
         consume_token(TK_INT);
 
         ast = add_AST(ast, 1, ast1);
     } else if (lookahead(1) == TK_CHAR) {  // primary : CHARACTER
 
         ast1 = create_AST("TK_CHAR", 0);
+        ast1->lexeme = token_p->lexeme;
         consume_token(TK_CHAR);
 
         ast = add_AST(ast, 1, ast1);
     } else if (lookahead(1) == TK_STRING) {  // primary : STRING
 
         ast1 = create_AST("TK_STRING", 0);
+        ast1->lexeme = token_p->lexeme;
         consume_token(TK_STRING);
 
         ast = add_AST(ast, 1, ast1);
     } else if (lookahead(1) == TK_ID) {  // primary : IDENTIFIER
 
         ast1 = create_AST("TK_ID", 0);
-        ast1->lexeme = next_token()->lexeme;
+        ast1->lexeme = token_p->lexeme;
+        consume_token(TK_ID);
+
         ast = add_AST(ast, 1, ast1);
     } else if (lookahead(1) == '(') {  // primary : "(" expression ")"
 
@@ -383,7 +389,8 @@ static struct AST *parse_statement() {
         struct AST *ast1, *ast2;
 
         ast1 = create_AST("TK_ID", 0);
-        ast1->lexeme = next_token()->lexeme;
+        ast1->lexeme = token_p->lexeme;
+        consume_token(TK_ID);
         assert(lookahead(1) == ':');
         ast2 = create_AST(":", 0);
         consume_token(':');
@@ -443,7 +450,8 @@ static struct AST *parse_statement() {
         consume_token(TK_KW_GOTO);
         assert(lookahead(1) == TK_ID);
         ast2 = create_AST("TK_ID", 0);
-        ast2->lexeme = next_token()->lexeme;
+        ast2->lexeme = token_p->lexeme;
+        consume_token(TK_ID);
         assert(lookahead(1) == ';');
         ast3 = create_AST(";", 0);
         consume_token(';');
@@ -926,8 +934,8 @@ static void unparse_AST(struct AST *ast, int depth) {
             | "return" (expression)? ";"
             | (expression)? ";"
         */
-        if (!strcmp(ast->child[0]->ast_type, "IK_ID")) {
-            printf_ns(depth, "%s:", ast->child[0]->lexeme);  // TODO: TK_ID の挙動と合わせて検討
+        if (!strcmp(ast->child[0]->ast_type, "TK_ID")) {
+            printf_ns(depth, "%s:", ast->child[0]->lexeme);
         } else if (!strcmp(ast->child[0]->ast_type, "compound_statement")) {
             unparse_AST(ast->child[0], depth);
         } else if (!strcmp(ast->child[0]->ast_type, "if")) {
