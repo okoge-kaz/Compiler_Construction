@@ -903,27 +903,24 @@ static void unparse_AST(struct AST *ast, int depth) {
         compound_statement
             : "{" ( type_specifier declarator ";" )* ( statement )* "}"
         */
-        for (i = 0; i < ast->num_child; i++) {
-            printf_ns(depth, "{\n");  // "{" ast->child[i]->ast_type == ";"
-
-            // ( type_specifier declarator ";" )*
-            while (!strcmp(ast->child[i + 1]->ast_type,
-                           "type_specifier")) {             // type_specifier declarator ";"
-                unparse_AST(ast->child[i + 1], depth);  // type_specifier
-                unparse_AST(ast->child[i + 2], depth);  // declarator
-                printf(";\n");                              // ";" ast->child[i + 3]->ast_type == ";"
-                i += 3;
-            }
-            // ( statement )*
-            while (!strcmp(ast->child[i + 1]->ast_type, "statement")) {
-                unparse_AST(ast->child[i + 1], depth + 1);  // statement
-                i += 1;
-            }
-            // "}"
-            printf_ns(depth, "}\n");  // i++ されるので i + 1 をしない
-            assert(ast->num_child == i + 1);
-            // TODO: 検証
+       // "{"
+        printf_ns(depth, "{\n");  // "{" ast->child[0]->ast_type == "{"
+        int ast_index = 1;
+        // ( type_specifier declarator ";" )*
+        while (!strcmp(ast->child[ast_index]->ast_type,
+                       "type_specifier")) {         // type_specifier declarator ";"
+            unparse_AST(ast->child[ast_index], depth + 1);  // type_specifier
+            unparse_AST(ast->child[ast_index + 1], depth + 1);  // declarator
+            printf(";\n");                          // ";" ast->child[ast_index + 2]->ast_type == ";"
+            ast_index += 3;
         }
+        // ( statement )*
+        while (!strcmp(ast->child[ast_index]->ast_type, "statement")) {
+            unparse_AST(ast->child[ast_index], depth + 1);  // statement
+            ast_index++;
+        }
+        // "}"
+        printf_ns(depth, "}\n");  // "}" ast->child[n]->ast_type == "}"
 
     } else if (!strcmp(ast->ast_type, "statement")) {
         /*
@@ -957,7 +954,7 @@ static void unparse_AST(struct AST *ast, int depth) {
             printf_ns(depth, "while (");            // ast->child[0], ast->child[1]
             unparse_AST(ast->child[2], depth + 1);  // expression ast->child[2]
 
-            printf_ns(0, ") {\n");              // ast->child[3] while 文の最初の {
+            printf_ns(0, ") {\n");                  // ast->child[3] while 文の最初の {
             unparse_AST(ast->child[4], depth + 1);  // statement ast->child[4]
             printf_ns(depth, "}\n");                // while 文の最後の }
         } else if (!strcmp(ast->child[0]->ast_type, "TK_KW_GOTO")) {
@@ -974,7 +971,7 @@ static void unparse_AST(struct AST *ast, int depth) {
         } else if (!strcmp(ast->child[0]->ast_type, ";")) {
             printf_ns(depth, ";\n");
         } else if (!strcmp(ast->child[0]->ast_type, "expression")) {
-            unparse_AST(ast->child[0], depth);// expression
+            unparse_AST(ast->child[0], depth);  // expression
             printf(";\n");
         } else {
             unparse_error(ast);
