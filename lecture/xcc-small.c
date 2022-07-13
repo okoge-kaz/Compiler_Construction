@@ -1016,6 +1016,21 @@ static void unparse_AST(struct AST *ast, int depth) {
             unparse_error(ast);
         }
     } else if (!strcmp(ast->ast_type, "declarator")) {
+        /*
+        declarator
+            : IDENTIFIER
+            | IDENTIFIER  "(" ")"
+        */
+        if (ast->num_child == 1) {
+            printf("%s ", ast->child[0]->lexeme);  // ast->child[0] IDENTIFIER
+        } else if (ast->num_child == 3) {
+            // ast->child[0] IDENTIFIER ast->child[1] "(" ast->child[2] ")"
+            printf("%s ", ast->child[0]->lexeme);
+            printf("(");
+            printf(")");
+        } else {
+            unparse_error(ast);
+        }
     } else {
         unparse_error(ast);
     }
