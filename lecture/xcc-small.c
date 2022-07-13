@@ -975,11 +975,9 @@ static void unparse_AST(struct AST *ast, int depth) {
         expression
             : primary ( "(" ")" )?
         */
-        // expression は printf_ns しない方がよい -> 文中で突然改行されると困るので
-        unparse_AST(ast->child[0], depth);
-        for (i = 1; i < ast->num_child; i++) {
-            printf(", ");
-            unparse_AST(ast->child[i], depth);
+        unparse_AST(ast->child[0], depth);  // primary
+        if (ast->num_child == 2) {
+            printf("()");
         }
     } else if (!strcmp(ast->ast_type, "primary")) {
         /*
