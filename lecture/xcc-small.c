@@ -379,7 +379,7 @@ static struct AST *parse_statement() {
     struct AST *ast;
     ast = create_AST("statement", 0);
 
-    if (lookahead(1) == TK_ID) {  // IDENTIFIER ":"
+    if (lookahead(1) == TK_ID && lookahead(2) == ':') {  // IDENTIFIER ":"
         struct AST *ast1, *ast2;
 
         ast1 = create_AST("TK_ID", 0);
