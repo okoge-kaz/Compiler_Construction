@@ -884,8 +884,8 @@ static void unparse_AST(struct AST *ast, int depth) {
         */
         for (i = 0; i < ast->num_child; i++) {
             printf_ns(depth, "");
-            unparse_AST(ast->child[i], depth + 1);      // type specifier
-            unparse_AST(ast->child[i + 1], depth + 1);  // declarator
+            unparse_AST(ast->child[i], depth);      // type specifier
+            unparse_AST(ast->child[i + 1], depth);  // declarator
 
             if (!strcmp(ast->child[i + 2]->ast_type, ";")) {  // ";"
                 printf(";\n");
@@ -909,8 +909,8 @@ static void unparse_AST(struct AST *ast, int depth) {
             // ( type_specifier declarator ";" )*
             while (!strcmp(ast->child[i + 1]->ast_type,
                            "type_specifier")) {             // type_specifier declarator ";"
-                unparse_AST(ast->child[i + 1], depth + 1);  // type_specifier
-                unparse_AST(ast->child[i + 2], depth + 1);  // declarator
+                unparse_AST(ast->child[i + 1], depth);  // type_specifier
+                unparse_AST(ast->child[i + 2], depth);  // declarator
                 printf(";\n");                              // ";" ast->child[i + 3]->ast_type == ";"
                 i += 3;
             }
@@ -920,8 +920,8 @@ static void unparse_AST(struct AST *ast, int depth) {
                 i += 1;
             }
             // "}"
-            printf_ns(depth, "}\n");          // i++ されるので i + 1 をしない
-            // assert(ast->num_child == i + 1); 
+            printf_ns(depth, "}\n");  // i++ されるので i + 1 をしない
+            assert(ast->num_child == i + 1);
             // TODO: 検証
         }
 
@@ -957,7 +957,7 @@ static void unparse_AST(struct AST *ast, int depth) {
             printf_ns(depth, "while (");            // ast->child[0], ast->child[1]
             unparse_AST(ast->child[2], depth + 1);  // expression ast->child[2]
 
-            printf_ns(depth, ") {\n");              // ast->child[3] while 文の最初の {
+            printf_ns(0, ") {\n");              // ast->child[3] while 文の最初の {
             unparse_AST(ast->child[4], depth + 1);  // statement ast->child[4]
             printf_ns(depth, "}\n");                // while 文の最後の }
         } else if (!strcmp(ast->child[0]->ast_type, "TK_KW_GOTO")) {
@@ -974,7 +974,7 @@ static void unparse_AST(struct AST *ast, int depth) {
         } else if (!strcmp(ast->child[0]->ast_type, ";")) {
             printf_ns(depth, ";\n");
         } else if (!strcmp(ast->child[0]->ast_type, "expression")) {
-            unparse_AST(ast->child[0], depth + 1);
+            unparse_AST(ast->child[0], depth);// expression
             printf(";\n");
         } else {
             unparse_error(ast);
@@ -984,7 +984,7 @@ static void unparse_AST(struct AST *ast, int depth) {
         expression
             : primary ( "(" ")" )?
         */
-        unparse_AST(ast->child[0], depth);  // primary
+        unparse_AST(ast->child[0], 0);  // primary
         if (ast->num_child == 2) {
             printf("()");
         }
@@ -994,13 +994,13 @@ static void unparse_AST(struct AST *ast, int depth) {
             : INTEGER | CHARACTER | STRING | IDENTIFIER | "(" expression ")"
         */
         if (!strcmp(ast->child[0]->ast_type, "TK_INT")) {
-            printf_ns(0, "%s", ast->child[0]->lexeme);
+            printf_ns(depth, "%s", ast->child[0]->lexeme);
         } else if (!strcmp(ast->child[0]->ast_type, "TK_CHAR")) {
-            printf_ns(0, "%s", ast->child[0]->lexeme);
+            printf_ns(depth, "%s", ast->child[0]->lexeme);
         } else if (!strcmp(ast->child[0]->ast_type, "TK_STRING")) {
-            printf_ns(0, "%s", ast->child[0]->lexeme);
+            printf_ns(depth, "%s", ast->child[0]->lexeme);
         } else if (!strcmp(ast->child[0]->ast_type, "TK_ID")) {
-            printf_ns(0, "%s", ast->child[0]->lexeme);
+            printf_ns(depth, "%s", ast->child[0]->lexeme);
         } else if (!strcmp(ast->child[0]->ast_type, "(")) {
             printf("( ");                       // ast->child[0]
             unparse_AST(ast->child[1], depth);  // expression ast->child[1]
@@ -1014,13 +1014,13 @@ static void unparse_AST(struct AST *ast, int depth) {
             : "void" | "int" | "char" | "long"
         */
         if (!strcmp(ast->child[0]->ast_type, "TK_KW_VOID")) {
-            printf("void ");
+            printf_ns(depth, "void ");
         } else if (!strcmp(ast->child[0]->ast_type, "TK_KW_INT")) {
-            printf("int ");
+            printf_ns(depth, "int ");
         } else if (!strcmp(ast->child[0]->ast_type, "TK_KW_CHAR")) {
-            printf("char ");
+            printf_ns(depth, "char ");
         } else if (!strcmp(ast->child[0]->ast_type, "TK_KW_LONG")) {
-            printf("long ");
+            printf_ns(depth, "long ");
         } else {
             unparse_error(ast);
         }
