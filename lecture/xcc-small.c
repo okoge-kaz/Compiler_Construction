@@ -275,7 +275,7 @@ static struct AST *parse_declarator() {
     create_AST("declarator", 0);
 
     if (lookahead(1) == TK_ID) {
-        ast1 = create_leaf("TK_ID", next_token()->lexeme);  // 変数名なため create_leafでよい？
+        ast1 = create_AST("TK_ID", 0);
 
         if (lookahead(1) == '(') {
             struct AST *ast3, *ast4;
