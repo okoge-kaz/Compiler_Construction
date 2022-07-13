@@ -314,7 +314,7 @@ static struct AST *parse_expression() {
         "return" expression ";" |
         ( expression )? ";"
 */
-static struct AST *parse_statement() {  // TODO: 以下のコードの実用性を検証
+static struct AST *parse_statement() {
     struct AST *ast;
     create_AST("statement", 0);
 
