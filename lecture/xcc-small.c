@@ -294,9 +294,46 @@ static struct AST *parse_declarator() {
     return ast;
 }
 
-// primary: INTEGER | CHARACTER | STRING | IDENTIFIER | "(" expression ")" 
+// primary: INTEGER | CHARACTER | STRING | IDENTIFIER | "(" expression ")"
 static struct AST *parse_primary() {
-    
+    struct AST *ast, *ast1, *ast2, *ast3;
+    create_AST("primary", 0);
+
+    if (lookahead(1) == TK_INT) {  // primary : INTEGER
+
+        ast1 = create_AST("TK_INT", 0);
+        consume_token(TK_INT);
+
+        ast = add_AST(ast, 1, ast1);
+    } else if (lookahead(1) == TK_CHAR) { // primary : CHARACTER
+        
+        ast1 = create_AST("TK_CHAR", 0);
+        consume_token(TK_CHAR);
+
+        ast = add_AST(ast, 1, ast1);
+    } else if (lookahead(1) == TK_STRING) { // primary : STRING
+        
+        ast1 = create_AST("TK_STRING", 0);
+        consume_token(TK_STRING);
+
+        ast = add_AST(ast, 1, ast1);
+    } else if (lookahead(1) == TK_ID) { // primary : IDENTIFIER
+        
+        ast1 = create_AST("TK_ID", 0);// 変数名だが create_leafでなく create_ASTにしてみた
+        ast = add_AST(ast, 1, ast1);
+    } else if (lookahead(1) == '(') { // primary : "(" expression ")"
+        
+        ast1 = create_AST("(", 0);
+        consume_token('(');
+        ast2 = parse_expression();
+        assert(lookahead(1) == ')');
+        ast3 = create_AST(")", 0);
+        consume_token(')');
+
+        ast = add_AST(ast, 3, ast1, ast2, ast3);
+    } else {
+        parse_error();
+    }
 }
 
 // expression: primary ( "(" ")" )?
