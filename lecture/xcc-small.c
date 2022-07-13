@@ -311,7 +311,7 @@ static struct AST *parse_expression() {
         "if" "(" expression ")" statement ("else" statement)? |
         "while" "(" expression ")" statement |
         "goto IDENTIFIER ";" |
-        "return" expression ";" |
+        "return" (expression)? ";" |
         ( expression )? ";"
 */
 static struct AST *parse_statement() {
