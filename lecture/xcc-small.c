@@ -271,28 +271,23 @@ static struct AST *parse_type_specifier() {
 
 // declarator: IDENTIFIER | IDENTIFIER "(" ")"
 static struct AST *parse_declarator() {
-    struct AST *ast, *ast1, *ast2;
+    struct AST *ast, *ast1, *ast2, *ast3;
     create_AST("declarator", 0);
 
     if (lookahead(1) == TK_ID) {
-        ast1 = create_AST("TK_ID", 0);
+        ast1 = create_leaf("TK_ID", next_token()->lexeme);
 
         if (lookahead(1) == '(') {
-            struct AST *ast3, *ast4;
-
-            ast2 = create_leaf("(", next_token()->lexeme);
+            ast2 = create_AST("(", 0);
+            consume_token('(');
             assert(lookahead(1) == ')');
-            ast3 = create_leaf(")", next_token()->lexeme);
-            assert(lookahead(1) == ';');
-            ast4 = create_leaf(";", next_token()->lexeme);
+            ast3 = create_AST(")", 0);
+            consume_token(')');
 
-            ast = add_AST(ast, 4, ast1, ast2, ast3, ast4);
+            ast = add_AST(ast, 3, ast1, ast2, ast3);
 
-        } else if (lookahead(1) == ';') {
-            ast2 = create_leaf(";", next_token()->lexeme);
-            ast = add_AST(ast, 2, ast1, ast2);
         } else {
-            parse_error();
+            ast = add_AST(ast, 1, ast1);
         }
     } else {
         parse_error();
@@ -311,24 +306,24 @@ static struct AST *parse_primary() {
         consume_token(TK_INT);
 
         ast = add_AST(ast, 1, ast1);
-    } else if (lookahead(1) == TK_CHAR) { // primary : CHARACTER
-        
+    } else if (lookahead(1) == TK_CHAR) {  // primary : CHARACTER
+
         ast1 = create_AST("TK_CHAR", 0);
         consume_token(TK_CHAR);
 
         ast = add_AST(ast, 1, ast1);
-    } else if (lookahead(1) == TK_STRING) { // primary : STRING
-        
+    } else if (lookahead(1) == TK_STRING) {  // primary : STRING
+
         ast1 = create_AST("TK_STRING", 0);
         consume_token(TK_STRING);
 
         ast = add_AST(ast, 1, ast1);
-    } else if (lookahead(1) == TK_ID) { // primary : IDENTIFIER
-        
-        ast1 = create_AST("TK_ID", 0);// 変数名だが create_leafでなく create_ASTにしてみた
+    } else if (lookahead(1) == TK_ID) {  // primary : IDENTIFIER
+
+        ast1 = create_leaf("TK_ID", next_token()->lexeme);
         ast = add_AST(ast, 1, ast1);
-    } else if (lookahead(1) == '(') { // primary : "(" expression ")"
-        
+    } else if (lookahead(1) == '(') {  // primary : "(" expression ")"
+
         ast1 = create_AST("(", 0);
         consume_token('(');
         ast2 = parse_expression();
@@ -500,13 +495,13 @@ static struct AST *parse_compound_statement() {
 
         ast = add_AST(ast, 1, ast1);
         // ( type_specifier declarator ";" ) *
-        while (lookahead(1) == TK_KW_VOID || lookahead(1) == TK_KW_CHAR || lookahead(1) == TK_KW_INT || lookahead(1) == TK_KW_LONG) {// type_specifier があるかどうか
-            
+        while (lookahead(1) == TK_KW_VOID || lookahead(1) == TK_KW_CHAR || lookahead(1) == TK_KW_INT || lookahead(1) == TK_KW_LONG) {  // type_specifier があるかどうか
+
             ast2 = parse_type_specifier();
             ast3 = parse_declarator();
             consume_token(';');
             ast4 = create_AST(";", 0);
-            
+
             ast = add_AST(ast, 3, ast2, ast3, ast4);
             // ( type_specifier declarator ";" ) * より、その都度追加する
         }
@@ -517,7 +512,7 @@ static struct AST *parse_compound_statement() {
                 break;
             } else {
                 ast5 = parse_statement();
-                
+
                 ast = add_AST(ast, 1, ast5);
                 // ( statement ) * より、その都度追加する
             }
