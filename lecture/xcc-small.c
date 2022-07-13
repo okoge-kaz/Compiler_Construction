@@ -974,6 +974,12 @@ static void unparse_AST(struct AST *ast, int depth) {
             printf(", ");
             unparse_AST(ast->child[i], depth);
         }
+    } else if(!strcmp(ast->ast_type, "primary")) {
+
+    } else if(!strcmp(ast->ast_type, "type_specifier")) {
+
+    } else if(!strcmp(ast->ast_type, "declarator")) {
+
     } else {
         unparse_error(ast);
     }
