@@ -313,9 +313,6 @@ static struct AST *parse_expression() {
             assert(lookahead(1) == ')');
             ast3 = create_AST(")", 0);
             consume_token(')');
-            assert(lookahead(1) == ';');
-            ast4 = create_AST(";", 0);
-            consume_token(';');
 
             ast = add_AST(ast, 3, ast1, ast2, ast3);
         } else {
