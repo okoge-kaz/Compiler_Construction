@@ -272,7 +272,7 @@ static struct AST *parse_type_specifier() {
 // declarator: IDENTIFIER | IDENTIFIER "(" ")"
 static struct AST *parse_declarator() {
     struct AST *ast, *ast1, *ast2, *ast3;
-    create_AST("declarator", 0);
+    ast = create_AST("declarator", 0);
 
     if (lookahead(1) == TK_ID) {
         ast1 = create_AST("TK_ID", 0);
@@ -299,7 +299,7 @@ static struct AST *parse_declarator() {
 // primary: INTEGER | CHARACTER | STRING | IDENTIFIER | "(" expression ")"
 static struct AST *parse_primary() {
     struct AST *ast, *ast1, *ast2, *ast3;
-    create_AST("primary", 0);
+    ast = create_AST("primary", 0);
 
     if (lookahead(1) == TK_INT) {  // primary : INTEGER
 
@@ -337,12 +337,13 @@ static struct AST *parse_primary() {
     } else {
         parse_error();
     }
+    return ast;
 }
 
 // expression: primary ( "(" ")" )?
 static struct AST *parse_expression() {
     struct AST *ast, *ast1, *ast2, *ast3;
-    create_AST("expression", 0);
+    ast = create_AST("expression", 0);
 
     if (lookahead(1) == TK_INT || lookahead(1) == TK_CHAR || lookahead(1) == TK_STRING || lookahead(1) == TK_ID || lookahead(1) == '(') {
         ast1 = parse_primary();
@@ -362,6 +363,7 @@ static struct AST *parse_expression() {
     } else {
         parse_error();
     }
+    return ast;
 }
 
 // statement
@@ -376,7 +378,7 @@ static struct AST *parse_expression() {
 */
 static struct AST *parse_statement() {
     struct AST *ast;
-    create_AST("statement", 0);
+    ast = create_AST("statement", 0);
 
     if (lookahead(1) == TK_ID) {  // IDENTIFIER ":"
         struct AST *ast1, *ast2;
@@ -491,7 +493,7 @@ static struct AST *parse_statement() {
 // compound_statement: "{" (type_specifier declarator ";")*  ( statement )*  "}"
 static struct AST *parse_compound_statement() {
     struct AST *ast, *ast1, *ast2, *ast3, *ast4, *ast5, *ast6;
-    create_AST("compound_statement", 0);
+    ast = create_AST("compound_statement", 0);
 
     if (lookahead(1) == '{') {
         consume_token('{');
