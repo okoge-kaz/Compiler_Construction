@@ -299,9 +299,34 @@ static struct AST *parse_primary() {
     
 }
 
-// expression: primary ( "(" ")" )? 
+// expression: primary ( "(" ")" )?
 static struct AST *parse_expression() {
+    struct AST *ast, *ast1, *ast2, *ast3, *ast4;
+    create_AST("expression", 0);
 
+    if (lookahead(1) == TK_INT || lookahead(1) == TK_CHAR || lookahead(1) == TK_STRING || lookahead(1) == TK_ID || lookahead(1) == '(') { 
+        ast1 = parse_primary();
+        if (lookahead(1) == '(') { // exp : primary "("  ")" ";"
+            ast2 = create_AST("(", 0);
+            consume_token('(');
+            assert(lookahead(1) == ')');
+            ast3 = create_AST(")", 0);
+            consume_token(')');
+            assert(lookahead(1) == ';');
+            ast4 = create_AST(";", 0);
+            consume_token(';');
+
+            ast = add_AST(ast, 4, ast1, ast2, ast3, ast4);
+        } else {
+            // exp : primary ";"
+            ast2 = create_AST(";", 0);
+            consume_token(';');
+            
+            ast = add_AST(ast, 2, ast1, ast2);
+        }
+    } else {
+        parse_error();
+    }
 }
 
 // statement
