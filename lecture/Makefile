@@ -17,9 +17,12 @@ xcc-small-test:
 
 test: test1 test2
 test1: $(EXES)
-	@for x in test1/t*.c; do ./$(EXES) $$x; done
+	@for x in test1/t*.c; do ./$(EXES) $$x > out/$$x ; done
 test2: $(EXES)
-	@for x in test2/t*.c; do ./$(EXES) $$x; done
+	@for x in test2/t*.c; do ./$(EXES) $$x > out/$$x ; done
 
 clean:
 	rm -f ${EXES}
+
+check:
+	@for x in test1/t*.c; do ${GCC} $$x; done
