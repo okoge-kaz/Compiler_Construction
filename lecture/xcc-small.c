@@ -862,14 +862,19 @@ static void unparse_error(struct AST *ast) {
 static void unparse_AST(struct AST *ast, int depth) {
     int i;
     if (!strcmp(ast->ast_type, "translation_unit")) {
+        /*
+        translation_unit
+            : ( type_specifier declarator ( ";" | compound_statement ) )*
+        */
         for (i = 0; i < ast->num_child; i++) {
             printf_ns(depth, "");
-            unparse_AST(ast->child[i], depth + 1);
-            unparse_AST(ast->child[i + 1], depth + 1);
-            if (!strcmp(ast->child[i + 2]->ast_type, ";")) {
+            unparse_AST(ast->child[i], depth + 1);      // type specifier
+            unparse_AST(ast->child[i + 1], depth + 1);  // declarator
+
+            if (!strcmp(ast->child[i + 2]->ast_type, ";")) {  // ";"
                 printf(";\n");
             } else if (!strcmp(ast->child[i + 2]->ast_type,
-                               "compound_statement")) {
+                               "compound_statement")) {  // compound_statement
                 printf("\n");
                 unparse_AST(ast->child[i + 2], depth);
             } else {
