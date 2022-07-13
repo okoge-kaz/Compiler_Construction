@@ -227,12 +227,6 @@ static struct token *next_token(void) {
     return token_p;
 }
 
-static struct token *current_token(void) {
-    assert(tokens_index < MAX_TOKENS);
-
-    return token_p;
-}
-
 static struct token *reset_tokens(void) {
     tokens_index = 0;
     token_p = &tokens[tokens_index];
@@ -927,8 +921,8 @@ static void unparse_AST(struct AST *ast, int depth) {
         if (!strcmp(ast->child[0]->ast_type, "IDENTIFIER")) {
             printf_ns(depth, "%s:", ast->child[0]->lexeme);  // TODO: TK_ID の挙動と合わせて検討
         } else if (!strcmp(ast->child[0]->ast_type, "compound_statement")) {
-            unparse_AST(ast->child[0],depth);
-        }else if (!strcmp(ast->child[0]->ast_type, "if")) {
+            unparse_AST(ast->child[0], depth);
+        } else if (!strcmp(ast->child[0]->ast_type, "if")) {
             printf_ns(depth, "if (");               // ast->child[0], ast->child[1]
             unparse_AST(ast->child[2], depth + 1);  // expression (補足: if ( expression ) の expression )
             printf_ns(depth, ") {\n");              // if 文なので { は必要 ast->child[3]
@@ -950,7 +944,7 @@ static void unparse_AST(struct AST *ast, int depth) {
             printf_ns(depth, "}\n");                // while 文の最後の }
         } else if (!strcmp(ast->child[0]->ast_type, "goto")) {
             printf_ns(depth, "goto");                // ast->child[0]
-            print_nspace(4);                        // 空白
+            print_nspace(4);                         // 空白
             printf("%s;\n", ast->child[1]->lexeme);  // ast->child[1] IDENTIFIER
 
         } else if (!strcmp(ast->child[0]->ast_type, "return")) {
@@ -963,7 +957,7 @@ static void unparse_AST(struct AST *ast, int depth) {
         } else if (!strcmp(ast->child[0]->ast_type, ";")) {
             printf_ns(depth, ";\n");
         } else if (!strcmp(ast->child[0]->ast_type, "expression")) {
-            unparse_AST(ast->child[0], depth + 1);// TODO: expression に渡す depth は意味がないので渡す値を考える
+            unparse_AST(ast->child[0], depth + 1);  // TODO: expression に渡す depth は意味がないので渡す値を考える
             printf(";\n");
         } else {
             unparse_error(ast);
@@ -974,18 +968,15 @@ static void unparse_AST(struct AST *ast, int depth) {
             : assignment_expression
             | expression "," assignment_expression
         */
-       // expression は printf_ns しない方がよい -> 文中で突然改行されると困るので
+        // expression は printf_ns しない方がよい -> 文中で突然改行されると困るので
         unparse_AST(ast->child[0], depth);
         for (i = 1; i < ast->num_child; i++) {
             printf(", ");
             unparse_AST(ast->child[i], depth);
         }
-    } else if(!strcmp(ast->ast_type, "primary")) {
-
-    } else if(!strcmp(ast->ast_type, "type_specifier")) {
-
-    } else if(!strcmp(ast->ast_type, "declarator")) {
-
+    } else if (!strcmp(ast->ast_type, "primary")) {
+    } else if (!strcmp(ast->ast_type, "type_specifier")) {
+    } else if (!strcmp(ast->ast_type, "declarator")) {
     } else {
         unparse_error(ast);
     }
