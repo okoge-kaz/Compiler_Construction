@@ -389,6 +389,10 @@ static struct AST *parse_statement() {
         consume_token(':');
 
         ast = add_AST(ast, 2, ast1, ast2);
+    } else if (lookahead(1) == '{') {  // compound_statement
+        struct AST *ast1;
+        ast1 = parse_compound_statement();
+        ast = add_AST(ast, 1, ast1);
     } else if (lookahead(1) == TK_KW_IF) {  // "if" "(" expression ")" statement ("else" statement)?
         struct AST *ast1, *ast2, *ast3, *ast4, *ast5;
 
