@@ -1000,6 +1000,21 @@ static void unparse_AST(struct AST *ast, int depth) {
             unparse_error(ast);
         }
     } else if (!strcmp(ast->ast_type, "type_specifier")) {
+        /*
+        type_specifier
+            : "void" | "int" | "char" | "long"
+        */
+        if (!strcmp(ast->child[0]->ast_type, "TK_KW_VOID")) {
+            printf("void ");
+        } else if (!strcmp(ast->child[0]->ast_type, "TK_KW_INT")) {
+            printf("int ");
+        } else if (!strcmp(ast->child[0]->ast_type, "TK_KW_CHAR")) {
+            printf("char ");
+        } else if (!strcmp(ast->child[0]->ast_type, "TK_KW_LONG")) {
+            printf("long ");
+        } else {
+            unparse_error(ast);
+        }
     } else if (!strcmp(ast->ast_type, "declarator")) {
     } else {
         unparse_error(ast);
