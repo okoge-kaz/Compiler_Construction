@@ -314,7 +314,101 @@ static struct AST *parse_expression() {
         "return" expression ";" |
         ( expression )? ";"
 */
-static struct AST *parse_statement() {
+static struct AST *parse_statement() {  // TODO: 以下のコードの実用性を検証
+    struct AST *ast;
+    create_AST("statement", 0);
+
+    if (lookahead(1) == TK_ID) {  // IDENTIFIER ":"
+        struct AST *ast1, *ast2;
+
+        ast1 = create_leaf("TK_ID", next_token()->lexeme);  // 変数名なため create_leafでよい？
+        assert(lookahead(1) == ':');
+        ast2 = create_AST(":", 0);
+        consume_token(':');
+
+        ast = add_AST(ast, 2, ast1, ast2);
+    } else if (lookahead(1) == TK_KW_IF) {  // "if" "(" expression ")" statement ("else" statement)?
+        struct AST *ast1, *ast2, *ast3, *ast4, *ast5;
+
+        ast1 = create_AST("TK_KW_IF", 0);
+        consume_token(TK_KW_IF);
+        assert(lookahead(1) == '(');
+        ast2 = create_AST("(", 0);
+        consume_token('(');
+        ast3 = parse_expression();
+        assert(lookahead(1) == ')');
+        ast4 = create_AST(")", 0);
+        consume_token(')');
+        ast5 = parse_statement();
+
+        ast = add_AST(ast, 5, ast1, ast2, ast3, ast4, ast5);
+    } else if (lookahead(1) == TK_KW_WHILE) {  // "while" "(" expression ")" statement
+        struct AST *ast1, *ast2, *ast3, *ast4;
+
+        ast1 = create_AST("TK_KW_WHILE", 0);
+        consume_token(TK_KW_WHILE);
+        assert(lookahead(1) == '(');
+        ast2 = create_AST("(", 0);
+        consume_token('(');
+        ast3 = parse_expression();
+        assert(lookahead(1) == ')');
+        ast4 = create_AST(")", 0);
+        consume_token(')');
+
+        ast = add_AST(ast, 4, ast1, ast2, ast3, ast4);
+    } else if (lookahead(1) == TK_KW_GOTO) {  // "goto IDENTIFIER ";"
+        struct AST *ast1, *ast2, *ast3;
+
+        ast1 = create_AST("TK_KW_GOTO", 0);
+        consume_token(TK_KW_GOTO);
+        assert(lookahead(1) == TK_ID);
+        ast2 = create_leaf("TK_ID", next_token()->lexeme);  // 変数名なため create_leafでよい？
+        assert(lookahead(1) == ';');
+        ast3 = create_AST(";", 0);
+        consume_token(';');
+
+        ast = add_AST(ast, 3, ast1, ast2, ast3);
+    } else if (lookahead(1) == TK_KW_RETURN) {  // "return" (expression)? ";"
+        struct AST *ast1, *ast2, *ast3;
+
+        ast1 = create_AST("TK_KW_RETURN", 0);
+        consume_token(TK_KW_RETURN);
+        if (lookahead(1) != ';') {
+            ast2 = parse_expression();
+            assert(lookahead(1) == ';');
+            ast3 = create_AST(";", 0);
+            consume_token(';');
+
+            ast = add_AST(ast, 3, ast1, ast2, ast3);
+        } else {
+            ast2 = create_AST(";", 0);
+            consume_token(';');
+
+            ast = add_AST(ast, 2, ast1, ast2);
+        }
+    } else if (lookahead(1) == ';') {  // ";"
+        struct AST *ast1;
+
+        ast1 = create_AST(";", 0);
+        consume_token(';');
+
+        ast = add_AST(ast, 1, ast1);
+    } else if (lookahead(1) == TK_INT || lookahead(1) == TK_CHAR || lookahead(1) == TK_STRING || lookahead(1) == TK_ID || lookahead(1) == '(') {  //  expression  ";"
+        // expression := primary ( "(" ")" )? ";"
+        // primary := INTEGER | CHARACTER | STRING | IDENTIFIER | "(" expression ")"
+        struct AST *ast1, *ast2;
+
+        ast1 = parse_expression();
+        assert(lookahead(1) == ';');
+        ast2 = create_AST(";", 0);
+        consume_token(';');
+
+        ast = add_AST(ast, 2, ast1, ast2);
+    } else {
+        parse_error();
+    }
+
+    return ast;
 }
 
 // compound_statement: "{" (type_specifier declarator ";")*  ( statement )*  "}"
