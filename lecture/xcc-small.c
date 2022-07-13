@@ -401,11 +401,11 @@ static struct AST *parse_statement() {
         assert(lookahead(1) == ')');
         ast4 = create_AST(")", 0);
         consume_token(')');
-        // 2個先のtokenが else なら if else 文と解釈
-        if (lookahead(2) == TK_KW_ELSE) {
-            // statement : "if" "(" expression ")" statement "else" statement
-            ast5 = parse_statement();
+        ast5 = parse_statement();
 
+        // 1個先のtokenが else なら if else 文と解釈
+        if (lookahead(1) == TK_KW_ELSE) {
+            // statement : "if" "(" expression ")" statement "else" statement
             struct AST *ast6, *ast7;
 
             ast6 = create_AST("TK_KW_ELSE", 0);
@@ -415,7 +415,6 @@ static struct AST *parse_statement() {
             ast = add_AST(ast, 7, ast1, ast2, ast3, ast4, ast5, ast6, ast7);
         } else {
             // statement : if "(" expression ")" statement
-            ast5 = parse_statement();
             ast = add_AST(ast, 5, ast1, ast2, ast3, ast4, ast5);
         }
     } else if (lookahead(1) == TK_KW_WHILE) {  // "while" "(" expression ")" statement
