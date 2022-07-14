@@ -1040,6 +1040,10 @@ static void unparse_AST(struct AST *ast, int depth) {
             */
             printf_ns(depth, ";\n");
         } else if (!strcmp(ast->child[0]->ast_type, "expression")) {
+            /*
+            statement
+                : expression ";"
+            */
             unparse_AST(ast->child[0], depth);  // expression
             printf(";\n");
         } else {
