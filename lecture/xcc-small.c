@@ -1054,7 +1054,7 @@ static void unparse_AST(struct AST *ast, int depth) {
         expression
             : primary ( "(" ")" )?
         */
-        unparse_AST(ast->child[0], 0);  // primary
+        unparse_AST(ast->child[0], depth);  // primary
         if (ast->num_child == 3) {
             printf("()");
         } else {
