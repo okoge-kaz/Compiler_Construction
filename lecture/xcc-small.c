@@ -941,6 +941,10 @@ static void unparse_AST(struct AST *ast, int depth) {
             */
             printf_ns(0, "%s:\n", ast->child[0]->lexeme);
         } else if (!strcmp(ast->child[0]->ast_type, "compound_statement")) {
+            /*
+            statement
+                : compound_statement
+            */
             unparse_AST(ast->child[0], depth);
         } else if (!strcmp(ast->child[0]->ast_type, "TK_KW_IF")) {
             int is_not_compound_statement_flag = 0;
