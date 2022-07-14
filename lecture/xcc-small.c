@@ -971,7 +971,7 @@ static void unparse_AST(struct AST *ast, int depth) {
                     unparse_AST(ast->child[6], 0);  // statement
                 } else {
                     int is_not_compound_statement_flag = 0;
-                    if (!strcmp(ast->child[6]->child[0]->ast_type, "compound_statement")) {
+                    if (strcmp(ast->child[6]->child[0]->ast_type, "compound_statement")) {
                         // else statement
                         // の statement の中身が compound_statement でない場合
                         // 次が compound_statement でない場合
