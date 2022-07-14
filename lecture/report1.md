@@ -38,6 +38,17 @@ director(`statement`, `"if" "(" exp ")" "if" "(" exp ")" statement "else" statem
 
 ### 実装方針
 
+構文解析 -> prase_AST の順で実装を行なった。   
+構文解析では、xcc-small.pdf のLL(1)文法のページを参考に parse_**  たちを実装した。
+
+translation_unit から順に、出てきた塊ごとに parse 関数を実装していくような形で実装を行なった。
+各関数では、 `ast = create_AST("<name>", 0)`をトップとして、それらに AST を add_ASTにより追加していく形で実装している。
+
+translation_unit, compound_statement だけは add_AST を1回だけでなく、複数回呼び出可能性がある形で実装しているが、それ以外では add_AST は1回しか呼び出さない形で実装することで見通しを良くしている。
+
+parse_AST についても、構文解析にて作成した AST を show_ASTの結果を参考に、適切な形で parseできるように実装した。
+indentation等は、 そのままdepthの数字を渡す箇所と depth + 1する箇所、 depth = 0とする箇所など出力結果が綺麗になるように句数して実装した。
+
 ### 工夫点
 
 実装する際に見通しが良くなるように、多くのコメントを残した。
