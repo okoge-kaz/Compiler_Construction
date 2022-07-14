@@ -1030,7 +1030,7 @@ static void unparse_AST(struct AST *ast, int depth) {
             printf_ns(depth, "return");
             if (ast->num_child > 2) {  // return ; でない場合 -> return expression ;
                 print_nspace(1);
-                unparse_AST(ast->child[1], depth + 1);
+                unparse_AST(ast->child[1], 0);
             }
             printf(";\n");  // return 文の最後の ;なので printf_ns でなくてよい
         } else if (!strcmp(ast->child[0]->ast_type, ";")) {
