@@ -1023,6 +1023,10 @@ static void unparse_AST(struct AST *ast, int depth) {
             printf("%s;\n", ast->child[1]->lexeme);  // ast->child[1] IDENTIFIER
 
         } else if (!strcmp(ast->child[0]->ast_type, "TK_KW_RETURN")) {
+            /*
+            statement
+                : "return" (expression)? ";"
+            */
             printf_ns(depth, "return");
             if (ast->num_child > 2) {  // return ; でない場合 -> return expression ;
                 print_nspace(1);
