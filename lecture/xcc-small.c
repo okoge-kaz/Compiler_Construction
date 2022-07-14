@@ -955,7 +955,7 @@ static void unparse_AST(struct AST *ast, int depth) {
             */
             int is_not_compound_statement_flag = 0;
 
-            printf_ns(depth, "if (");               // ast->child[0], ast->child[1]
+            printf_ns(depth, "if (");       // ast->child[0], ast->child[1]
             unparse_AST(ast->child[2], 0);  // expression (補足: if ( expression ) の expression )
             if (strcmp(ast->child[4]->child[0]->ast_type, "compound_statement")) {
                 // if ( expression ) statement
@@ -1008,7 +1008,7 @@ static void unparse_AST(struct AST *ast, int depth) {
             statement
                 : "while" "(" expression ")" statement
             */
-            printf_ns(depth, "while (");            // ast->child[0], ast->child[1]
+            printf_ns(depth, "while (");    // ast->child[0], ast->child[1]
             unparse_AST(ast->child[2], 0);  // expression ast->child[2]
 
             printf_ns(0, ") \n");                   // ast->child[3] while 文の最初の {
@@ -1074,9 +1074,9 @@ static void unparse_AST(struct AST *ast, int depth) {
         } else if (!strcmp(ast->child[0]->ast_type, "TK_ID")) {
             printf_ns(depth, "%s", ast->child[0]->lexeme);
         } else if (!strcmp(ast->child[0]->ast_type, "(")) {
-            printf_ns(depth, "( ");                       // ast->child[0]
+            printf_ns(depth, "( ");         // ast->child[0]
             unparse_AST(ast->child[1], 0);  // expression ast->child[1]
-            printf(" )");                       // ast->child[2]
+            printf(" )");                   // ast->child[2]
         } else {
             unparse_error(ast);
         }
