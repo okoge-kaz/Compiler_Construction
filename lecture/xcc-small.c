@@ -1009,7 +1009,7 @@ static void unparse_AST(struct AST *ast, int depth) {
                 : "while" "(" expression ")" statement
             */
             printf_ns(depth, "while (");            // ast->child[0], ast->child[1]
-            unparse_AST(ast->child[2], depth + 1);  // expression ast->child[2]
+            unparse_AST(ast->child[2], 0);  // expression ast->child[2]
 
             printf_ns(0, ") \n");                   // ast->child[3] while 文の最初の {
             unparse_AST(ast->child[4], depth + 1);  // statement ast->child[4]
