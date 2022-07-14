@@ -6,7 +6,7 @@ int main ()
     int x ;
     char y ;
     x;
-( x );
+    ( x );
     if (1) 
         {
             return;
