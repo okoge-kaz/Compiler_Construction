@@ -933,7 +933,12 @@ static void unparse_AST(struct AST *ast, int depth) {
             | (expression)? ";"
         */
         if (strcmp(ast->child[0]->ast_type, "TK_ID") == 0 && !strcmp(ast->child[1]->ast_type, ":")) {
-            // expression の first と衝突するので
+            /*
+            statement
+                : IDENTIFIER ":"
+
+                1文字先だけでなく、2文字先まで取得して判断する理由は、expression の first と衝突するためである。
+            */
             printf_ns(0, "%s:\n", ast->child[0]->lexeme);
         } else if (!strcmp(ast->child[0]->ast_type, "compound_statement")) {
             unparse_AST(ast->child[0], depth);
