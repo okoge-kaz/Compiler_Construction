@@ -967,12 +967,25 @@ static void unparse_AST(struct AST *ast, int depth) {
                 }
 
                 if (is_elseif_flag) {
-                    printf_ns(depth, "else ");  // else if
+                    printf_ns(depth, "else ");      // else if
                     unparse_AST(ast->child[6], 0);  // statement
                 } else {
-                    printf_ns(depth, "else {\n");           // else 文なので { は必要  ast->child[5]
-                    unparse_AST(ast->child[6], depth + 1);  // statement ast->child[6]
-                    printf_ns(depth, "}\n");                // } else 文の最後の }
+                    int is_not_compound_statement_flag = 0;
+                    if (!strcmp(ast->child[6]->child[0]->ast_type, "compound_statement")) {
+                        // else statement
+                        // の statement の中身が compound_statement でない場合
+                        // 次が compound_statement でない場合
+                        is_not_compound_statement_flag = 1;
+                    }
+
+                    if (is_not_compound_statement_flag) {
+                        printf_ns(depth, "else {\n");           // else 文なので { は必要  ast->child[5]
+                        unparse_AST(ast->child[6], depth + 1);  // statement ast->child[6]
+                        printf_ns(depth, "}\n");                // } else 文の最後の }
+                    } else {
+                        printf_ns(depth, "else\n");             // else 文なので {} の補完はいらない
+                        unparse_AST(ast->child[6], depth + 1);  // statement
+                    }
                 }
             }
         } else if (!strcmp(ast->child[0]->ast_type, "TK_KW_WHILE")) {
