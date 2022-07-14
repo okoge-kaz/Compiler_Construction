@@ -5,7 +5,7 @@ int main ()
 {
     int x ;
     char y ;
-x;
+    x;
 ( x );
     if (1) 
         {
@@ -21,6 +21,6 @@ else if (1)
     }
 else
     {
-foo1();
+        foo1();
     }
 }
