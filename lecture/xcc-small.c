@@ -1034,6 +1034,10 @@ static void unparse_AST(struct AST *ast, int depth) {
             }
             printf(";\n");  // return 文の最後の ;なので printf_ns でなくてよい
         } else if (!strcmp(ast->child[0]->ast_type, ";")) {
+            /*
+            statement
+                : ";"
+            */
             printf_ns(depth, ";\n");
         } else if (!strcmp(ast->child[0]->ast_type, "expression")) {
             unparse_AST(ast->child[0], depth);  // expression
