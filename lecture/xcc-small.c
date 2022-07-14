@@ -973,6 +973,7 @@ static void unparse_AST(struct AST *ast, int depth) {
                     printf_ns(depth, "else {\n");           // else 文なので { は必要  ast->child[5]
                     unparse_AST(ast->child[6], depth + 1);  // statement ast->child[6]
                     printf_ns(depth, "}\n");                // } else 文の最後の }
+                }
             }
         } else if (!strcmp(ast->child[0]->ast_type, "TK_KW_WHILE")) {
             printf_ns(depth, "while (");            // ast->child[0], ast->child[1]
