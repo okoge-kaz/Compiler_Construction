@@ -903,15 +903,15 @@ static void unparse_AST(struct AST *ast, int depth) {
         compound_statement
             : "{" ( type_specifier declarator ";" )* ( statement )* "}"
         */
-       // "{"
+        // "{"
         printf_ns(depth, "{\n");  // "{" ast->child[0]->ast_type == "{"
         int ast_index = 1;
         // ( type_specifier declarator ";" )*
         while (!strcmp(ast->child[ast_index]->ast_type,
-                       "type_specifier")) {         // type_specifier declarator ";"
-            unparse_AST(ast->child[ast_index], depth + 1);  // type_specifier
+                       "type_specifier")) {                     // type_specifier declarator ";"
+            unparse_AST(ast->child[ast_index], depth + 1);      // type_specifier
             unparse_AST(ast->child[ast_index + 1], depth + 1);  // declarator
-            printf(";\n");                          // ";" ast->child[ast_index + 2]->ast_type == ";"
+            printf(";\n");                                      // ";" ast->child[ast_index + 2]->ast_type == ";"
             ast_index += 3;
         }
         // ( statement )*
@@ -938,12 +938,26 @@ static void unparse_AST(struct AST *ast, int depth) {
         } else if (!strcmp(ast->child[0]->ast_type, "compound_statement")) {
             unparse_AST(ast->child[0], depth);
         } else if (!strcmp(ast->child[0]->ast_type, "TK_KW_IF")) {
+            int is_not_compound_statement_flag = 0;
+
             printf_ns(depth, "if (");               // ast->child[0], ast->child[1]
             unparse_AST(ast->child[2], depth + 1);  // expression (補足: if ( expression ) の expression )
-            printf_ns(0, ") {\n");                  // if 文なので { は必要 ast->child[3]
+            if (strcmp(ast->child[4]->child[0]->ast_type, "compound_statement")) {
+                // if ( expression ) statement
+                // の statement の中身が compound_statement でない場合
+                // 次が compound_statement でない場合
+                printf_ns(0, ") {\n");  // if 文なので { は必要 ast->child[3]
+                is_not_compound_statement_flag = 1;
+            } else {
+                // compound statement である場合
+                printf_ns(0, ") \n");  // compound statement であるので {} の補完はいらない
+            }
 
             unparse_AST(ast->child[4], depth + 1);  // statement
-            printf_ns(depth, "}\n");                // } if 文の最後の }
+            if (is_not_compound_statement_flag) {
+                // compound statement でない場合 は } を補う
+                printf_ns(depth, "}\n");  // } if 文の最後の }
+            }
 
             if (ast->num_child == 7) {                  // 0-6 より 7個 childがあるので
                 printf_ns(depth, "else {\n");           // else 文なので { は必要  ast->child[5]
@@ -954,9 +968,9 @@ static void unparse_AST(struct AST *ast, int depth) {
             printf_ns(depth, "while (");            // ast->child[0], ast->child[1]
             unparse_AST(ast->child[2], depth + 1);  // expression ast->child[2]
 
-            printf_ns(0, ") {\n");                  // ast->child[3] while 文の最初の {
+            printf_ns(0, ") \n");                   // ast->child[3] while 文の最初の {
             unparse_AST(ast->child[4], depth + 1);  // statement ast->child[4]
-            printf_ns(depth, "}\n");                // while 文の最後の }
+            // printf_ns(depth, "}\n");                // while 文の最後の }
         } else if (!strcmp(ast->child[0]->ast_type, "TK_KW_GOTO")) {
             printf_ns(depth, "goto ");               // ast->child[0]
             printf("%s;\n", ast->child[1]->lexeme);  // ast->child[1] IDENTIFIER
@@ -984,7 +998,7 @@ static void unparse_AST(struct AST *ast, int depth) {
         unparse_AST(ast->child[0], 0);  // primary
         if (ast->num_child == 3) {
             printf("()");
-        }else{
+        } else {
             assert(ast->num_child == 1);
         }
     } else if (!strcmp(ast->ast_type, "primary")) {
