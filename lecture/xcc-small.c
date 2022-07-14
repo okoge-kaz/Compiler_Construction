@@ -982,8 +982,10 @@ static void unparse_AST(struct AST *ast, int depth) {
             : primary ( "(" ")" )?
         */
         unparse_AST(ast->child[0], 0);  // primary
-        if (ast->num_child == 2) {
+        if (ast->num_child == 3) {
             printf("()");
+        }else{
+            assert(ast->num_child == 1);
         }
     } else if (!strcmp(ast->ast_type, "primary")) {
         /*
