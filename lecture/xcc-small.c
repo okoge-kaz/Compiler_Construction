@@ -959,10 +959,20 @@ static void unparse_AST(struct AST *ast, int depth) {
                 printf_ns(depth, "}\n");  // } if 文の最後の }
             }
 
-            if (ast->num_child == 7) {                  // 0-6 より 7個 childがあるので
-                printf_ns(depth, "else {\n");           // else 文なので { は必要  ast->child[5]
-                unparse_AST(ast->child[6], depth + 1);  // statement ast->child[6]
-                printf_ns(depth, "}\n");                // } else 文の最後の }
+            if (ast->num_child == 7) {  // 0-6 より 7個 childがあるので
+                int is_elseif_flag = 0;
+                if (!strcmp(ast->child[6]->child[0]->ast_type, "TK_KW_IF")) {
+                    // else if
+                    is_elseif_flag = 1;
+                }
+
+                if (is_elseif_flag) {
+                    printf_ns(depth, "else ");  // else if
+                    unparse_AST(ast->child[6], 0);  // statement
+                } else {
+                    printf_ns(depth, "else {\n");           // else 文なので { は必要  ast->child[5]
+                    unparse_AST(ast->child[6], depth + 1);  // statement ast->child[6]
+                    printf_ns(depth, "}\n");                // } else 文の最後の }
             }
         } else if (!strcmp(ast->child[0]->ast_type, "TK_KW_WHILE")) {
             printf_ns(depth, "while (");            // ast->child[0], ast->child[1]
