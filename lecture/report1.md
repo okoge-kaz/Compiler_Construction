@@ -40,6 +40,51 @@ director(`statement`, `"if" "(" exp ")" "if" "(" exp ")" statement "else" statem
 
 ### 工夫点
 
+実装する際に見通しが良くなるように、多くのコメントを残した。
+また、formatterを用いて統一的なコーディングスタイルを実現した。
+
+またwarningsが極力出ないように、不要な関数などを消去した。
+最終的に以下のような状態になっている。
+
+```
+xcc-small.c:237:22: warning: comparison of integers of different signs: 'int' and 'enum token_kind' [-Wsign-compare]
+    if (lookahead(1) == kind) {
+        ~~~~~~~~~~~~ ^  ~~~~
+xcc-small.c:727:19: warning: declaration shadows a variable in the global scope [-Wshadow]
+    struct token *token_p = &tokens[tokens_index++];
+                  ^
+xcc-small.c:121:22: note: previous declaration is here
+static struct token *token_p;  // for parsing
+                     ^
+xcc-small.c:753:11: warning: unused variable 'ptr_start' [-Wunused-variable]
+    char *ptr_start = ptr;
+          ^
+xcc-small.c:862:23: warning: declaration shadows a variable in the global scope [-Wshadow]
+        struct token *token_p = &tokens[i];
+                      ^
+xcc-small.c:121:22: note: previous declaration is here
+static struct token *token_p;  // for parsing
+                     ^
+xcc-small.c:988:25: warning: declaration shadows a local variable [-Wshadow]
+                    int is_not_compound_statement_flag = 0;
+                        ^
+xcc-small.c:956:17: note: previous declaration is here
+            int is_not_compound_statement_flag = 0;
+                ^
+xcc-small.c:164:20: warning: unused function 'create_leaf' [-Wunused-function]
+static struct AST *create_leaf(char *ast_type, char *lexeme) {
+                   ^
+xcc-small.c:195:13: warning: function 'show_AST' is not needed and will not be emitted [-Wunneeded-internal-declaration]
+static void show_AST(struct AST *ast, int depth) {
+            ^
+xcc-small.c:648:14: warning: unused function 'copy_string_region_ptr' [-Wunused-function]
+static void *copy_string_region_ptr(char *start, char *end) {
+             ^
+xcc-small.c:859:13: warning: unused function 'dump_tokens' [-Wunused-function]
+static void dump_tokens() {
+            ^
+9 warnings generated.
+```
 ### アピールポイント
 
 適切なインデントが実現されている点がアピールポイントである。   
