@@ -1004,6 +1004,10 @@ static void unparse_AST(struct AST *ast, int depth) {
                 }
             }
         } else if (!strcmp(ast->child[0]->ast_type, "TK_KW_WHILE")) {
+            /*
+            statement
+                : "while" "(" expression ")" statement
+            */
             printf_ns(depth, "while (");            // ast->child[0], ast->child[1]
             unparse_AST(ast->child[2], depth + 1);  // expression ast->child[2]
 
