@@ -1015,6 +1015,10 @@ static void unparse_AST(struct AST *ast, int depth) {
             unparse_AST(ast->child[4], depth + 1);  // statement ast->child[4]
             // printf_ns(depth, "}\n");                // while 文の最後の }
         } else if (!strcmp(ast->child[0]->ast_type, "TK_KW_GOTO")) {
+            /*
+            statement
+                : "goto" IDENTIFIER ";"
+            */
             printf_ns(depth, "goto ");               // ast->child[0]
             printf("%s;\n", ast->child[1]->lexeme);  // ast->child[1] IDENTIFIER
 
