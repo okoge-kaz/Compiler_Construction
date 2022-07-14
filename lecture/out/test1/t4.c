@@ -12,11 +12,10 @@ void foo ()
 "hello, world\n";
 '\n';
                                 }
-                            else {
+                            else
                                 {
                                     return;
                                 }
-                            }
                         }
                 }
         }

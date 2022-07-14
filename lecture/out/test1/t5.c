@@ -19,9 +19,8 @@ else if (1)
     {
         ;
     }
-else {
+else
     {
 foo1();
     }
-}
 }

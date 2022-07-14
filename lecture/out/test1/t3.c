@@ -4,7 +4,8 @@ int main ()
         if (2) {
             return 0;
         }
-        else
+        else {
             return 1;
+        }
     }
 }
