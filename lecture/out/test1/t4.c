@@ -8,9 +8,9 @@ void foo ()
                         {
                             if (0) 
                                 {
-10;
-"hello, world\n";
-'\n';
+                                    10;
+                                    "hello, world\n";
+                                    '\n';
                                 }
                             else
                                 {
@@ -23,5 +23,5 @@ void foo ()
 }
 int main ()
 {
-foo();
+    foo();
 }
