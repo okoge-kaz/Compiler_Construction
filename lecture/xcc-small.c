@@ -947,6 +947,12 @@ static void unparse_AST(struct AST *ast, int depth) {
             */
             unparse_AST(ast->child[0], depth);
         } else if (!strcmp(ast->child[0]->ast_type, "TK_KW_IF")) {
+            /*
+            statement
+                : "if" "(" expression ")" statement ("else" statement)?
+
+                "if" "(" expression ")" statement の statementが compound_statement であるかいなかで、場合わけを行う。
+            */
             int is_not_compound_statement_flag = 0;
 
             printf_ns(depth, "if (");               // ast->child[0], ast->child[1]
