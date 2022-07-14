@@ -1075,7 +1075,7 @@ static void unparse_AST(struct AST *ast, int depth) {
             printf_ns(depth, "%s", ast->child[0]->lexeme);
         } else if (!strcmp(ast->child[0]->ast_type, "(")) {
             printf("( ");                       // ast->child[0]
-            unparse_AST(ast->child[1], depth);  // expression ast->child[1]
+            unparse_AST(ast->child[1], 0);  // expression ast->child[1]
             printf(" )");                       // ast->child[2]
         } else {
             unparse_error(ast);
