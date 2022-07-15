@@ -24,15 +24,8 @@ statement :
 
 なぜならば
 
-**ここに関しては要検証**書き方がまずいと思われる。
-
-director(`statement`, `"if" "(" exp ")" statement "else" statement`)  
-= first(`"if" "(" exp ")" statement "else" statement`) = {`"if"`}
-
-director(`statement`, `"if" "(" exp ")" "if" "(" exp ")" statement "else" statement`)
-= first(`"if" "(" exp ")" "if" "(" exp ")" statement "else" statement`) = {`"if"`}
-
-となるため LL(1)文法ではない。
+else を if ( exp ) statement の statement の中に if がある際に、どちらの if と対応づけるかについて”あいまい”であり、１トークン再帰読みによって１つの構文木に決定することができない。
+そのため LL(1)文法ではない。
 
 ## xcc-small
 
@@ -47,7 +40,7 @@ translation_unit から順に、出てきた塊ごとに parse 関数を実装�
 translation_unit, compound_statement だけは add_AST を1回だけでなく、複数回呼び出可能性がある形で実装しているが、それ以外では add_AST は1回しか呼び出さない形で実装することで見通しを良くしている。
 
 parse_AST についても、構文解析にて作成した AST を show_ASTの結果を参考に、適切な形で parseできるように実装した。
-indentation等は、 そのままdepthの数字を渡す箇所と depth + 1する箇所、 depth = 0とする箇所など出力結果が綺麗になるように句数して実装した。
+indentation等は、 そのままdepthの数字を渡す箇所と depth + 1する箇所、 depth = 0とする箇所など出力結果が綺麗になるように工夫して実装した。
 
 ### 工夫点
 
