@@ -246,6 +246,7 @@ codegen_exp_funcall(struct AST *ast_func) {
 
 static void codegen_exp(struct AST *ast) {
     /*
+     *   AST_expression_id : identifier 変数名
      *  AST_expression_int : int
      *  AST_expression_long : long
      *  AST_expression_char : char
