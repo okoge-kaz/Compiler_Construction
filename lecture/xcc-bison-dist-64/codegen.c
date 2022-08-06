@@ -327,8 +327,17 @@ static void codegen_exp(struct AST *ast) {
     }
 }
 
-static void
-codegen_stmt(struct AST *ast_stmt) {
+static void codegen_stmt(struct AST *ast_stmt) {
+    /*
+     *  AST_statement_exp : expression
+     *  AST_statement_comp : compound statement
+     *  AST_statement_if : if (条件) { 処理 }
+     *  AST_statement_ifelse : if (条件) { 処理 } else { 処理 }
+     *  AST_statement_while : while (条件) { ステートメント }
+     *  AST_statement_goto : goto 文
+     *  AST_statement_label : goto 文の飛び先 Label
+     *  AST_statement_return : return 文
+     */
     if (!strcmp(ast_stmt->ast_type, "AST_statement_exp")) {
         if (!strcmp(ast_stmt->child[0]->ast_type, "AST_expression_opt_single")) {
             codegen_exp(ast_stmt->child[0]->child[0]);
