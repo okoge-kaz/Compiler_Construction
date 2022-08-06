@@ -286,6 +286,9 @@ static void codegen_exp(struct AST *ast) {
         emit_code(ast, "\tleaq    %s.%s(%%rip), %%rax \t# \"%s\"\n", LABEL_PREFIX, string->label, string->data);
         emit_code(ast, "\tpushq   %%rax\n");
     } else if (!strcmp(ast->ast_type, "AST_expression_id")) {
+        /*
+         *  AST_expression_id : identifier 変数名
+         */
         codegen_exp_id(ast);
     } else if (!strcmp(ast->ast_type, "AST_expression_funcall1") || !strcmp(ast->ast_type, "AST_expression_funcall2")) {
         codegen_exp_funcall(ast);
