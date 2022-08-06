@@ -276,6 +276,10 @@ static void codegen_exp(struct AST *ast) {
         emit_code(ast, "\tmovq    $0x%lx, %%rax\n", ast->u.long_val);
         emit_code(ast, "\tpushq   %%rax\n");
     } else if (!strcmp(ast->ast_type, "AST_expression_string")) {
+        /*
+         *  AST_expression_string : string (char*)
+         */
+
         struct String *string = string_lookup(ast->u.id);
         assert(string != NULL);
         emit_code(ast, "\tleaq    %s.%s(%%rip), %%rax \t# \"%s\"\n",
