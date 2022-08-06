@@ -103,8 +103,7 @@ is_library_func(char *libname) {
 /* ---------------------------------------------------------------------- */
 // ここから下は好きに修正や拡張をしても構わない
 
-static void
-codegen_exp_id(struct AST *ast) {
+static void codegen_exp_id(struct AST *ast) {
     int offset;
     char *reg = "%rax";
     struct Symbol *sym = sym_lookup(ast->child[0]->u.id);
