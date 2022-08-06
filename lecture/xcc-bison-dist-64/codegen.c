@@ -357,8 +357,7 @@ static void codegen_stmt(struct AST *ast_stmt) {
     }
 }
 
-static void
-codegen_block(struct AST *ast_block) {
+static void codegen_block(struct AST *ast_block) {
     struct AST *ast, *ast_stmt_list;
     assert(!strcmp(ast_block->ast_type, "AST_compound_statement"));
     codegen_begin_block(ast_block);
@@ -379,8 +378,7 @@ codegen_block(struct AST *ast_block) {
     codegen_end_block();
 }
 
-static void
-codegen_dec(struct AST *ast) {
+static void codegen_dec(struct AST *ast) {
     assert(!strcmp(ast->ast_type, "AST_declaration"));
     if (ast->type->size <= 0)
         return;
@@ -395,8 +393,7 @@ codegen_dec(struct AST *ast) {
     emit_code(ast, "\t.skip   %d\n\n", ast->type->size);
 }
 
-static void
-codegen_func(struct AST *ast) {
+static void codegen_func(struct AST *ast) {
     struct String *string, *head;
 
     assert(!strcmp(ast->ast_type, "AST_function_definition"));
