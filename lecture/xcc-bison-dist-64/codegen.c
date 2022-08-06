@@ -295,6 +295,33 @@ static void codegen_exp(struct AST *ast) {
         /*
             } else if (.....) {  // 他の expression の場合のコードをここに追加する
          */
+    } else if (!strcmp(ast->ast_type, "AST_expression_less") ||
+               !strcmp(ast->ast_type, "AST_expression_add") ||
+               !strcmp(ast->ast_type, "AST_expression_sub")) {
+        /*
+         *  AST_expression_less : < 比較演算子
+         *  AST_expression_add : + 演算子
+         *  AST_expression_sub : - 演算子
+         *
+         * 方針としてはスタック機械としての振る舞いを実装する。
+         * まず 2回 pop する -> 演算ごとに分岐 -> 演算 -> 結果を push する
+         */
+        codegen_exp(ast->child[0]);  // 左辺: これがいるかは要検討(構文木は下から上に登っていくので)
+        codegen_exp(ast->child[1]);  // 右辺: これがいるかは要検討
+
+        emit_code(ast, "\tpopq    %%rdx\n");
+        emit_code(ast, "\tpopq    %%rax\n");
+
+        if (!strcmp(ast->ast_type, "AST_expression_less")) {
+            emit_code(ast, "\tcmpq    %%rax, %%rdx\n");
+            emit_code(ast, "\tsetl    %s\n", ast->child[2]->u.id);
+        } else if (!strcmp(ast->ast_type, "AST_expression_add")) {
+            emit_code(ast, "\taddq    %%rdx, %%rax\n");
+        } else if (!strcmp(ast->ast_type, "AST_expression_sub")) {
+            emit_code(ast, "\tsubq    %%rdx, %%rax\n");
+        }
+
+        emit_code(ast, "\tpushq   %%rax\n");
     } else {
         //        assert (0);
     }
