@@ -303,11 +303,6 @@ static void codegen_exp(struct AST *ast) {
         emit_code(ast, "\tmovq    %%rcx, %%rax\n");
         emit_code(ast, "\tpushq   %%rax\n");
 
-    } else if (!strcmp(ast->ast_type, "AST_expression_funcall1") || !strcmp(ast->ast_type, "AST_expression_funcall2")) {
-        codegen_exp_funcall(ast);
-        /*
-            } else if (.....) {  // 他の expression の場合のコードをここに追加する
-         */
     } else if (!strcmp(ast->ast_type, "AST_expression_less") ||
                !strcmp(ast->ast_type, "AST_expression_add") ||
                !strcmp(ast->ast_type, "AST_expression_sub")) {
@@ -335,6 +330,10 @@ static void codegen_exp(struct AST *ast) {
         }
 
         emit_code(ast, "\tpushq   %%rax\n");
+    } else if (!strcmp(ast->ast_type, "AST_expression_funcall1") ||
+               !strcmp(ast->ast_type, "AST_expression_funcall2")) {
+        codegen_exp_funcall(ast);
+
     } else {
         //        assert (0);
     }
