@@ -244,9 +244,35 @@ codegen_exp_funcall(struct AST *ast_func) {
     emit_code(ast_func, "\tpushq   %%rax\n");
 }
 
-static void
-codegen_exp(struct AST *ast) {
-    if (!strcmp(ast->ast_type, "AST_expression_int") || !strcmp(ast->ast_type, "AST_expression_char") || !strcmp(ast->ast_type, "AST_expression_long")) {
+static void codegen_exp(struct AST *ast) {
+    /*
+     *  AST_expression_int : int
+     *  AST_expression_long : long
+     *  AST_expression_char : char
+     *  AST_expression_string : string (char*)
+     *  AST_expression_assign : = 代入
+     *  AST_expression_lor : || 論理演算子 OR
+     *  AST_expression_land : && 論理演算子 AND
+     *  AST_expression_eq : == 比較演算子
+     *  AST_expression_less : < 比較演算子
+     *  AST_expression_add : + 演算子
+     *  AST_expression_sub : - 演算子
+     *  AST_expression_mul : * 演算子
+     *  AST_expression_div : / 演算子
+     *  AST_expression_unary : + - ! 単項演算子
+     *  AST_expression_list : 配列 int * 
+     *  AST_expression_funcall1 : 関数呼び出し1
+     *  AST_expression_funcall2 : 関数呼び出し2
+     *  AST_expression_paren : 括弧 ()
+     */
+    if (!strcmp(ast->ast_type, "AST_expression_int") ||
+        !strcmp(ast->ast_type, "AST_expression_char") ||
+        !strcmp(ast->ast_type, "AST_expression_long")) {
+        /*
+         *  AST_expression_int : int
+         *  AST_expression_char : char
+         *  AST_expression_long : long
+         */
         emit_code(ast, "\tmovq    $0x%lx, %%rax\n", ast->u.long_val);
         emit_code(ast, "\tpushq   %%rax\n");
     } else if (!strcmp(ast->ast_type, "AST_expression_string")) {
