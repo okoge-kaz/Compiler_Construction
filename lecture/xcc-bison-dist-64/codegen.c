@@ -373,6 +373,12 @@ void codegen(void) {
     struct AST *ast, *ast_ext;
     ast = search_AST_bottom(ast_root, "AST_translation_unit_single", NULL);
 
+    /*
+        search_AST_bottom は、抽象構文木の最下部にある AST を返す。
+        そして以下の while ループにより、 ast = ast->parent で徐々に上に上がっていきながらコード生成を行う。
+
+        ast == ast_root では、抽象構文木の最上部にある AST にたどり着いたのでこれ以上処理を行わないことを表している。
+    */
     while (1) {
         if (!strcmp(ast->ast_type, "AST_translation_unit_single"))
             ast_ext = ast->child[0];
