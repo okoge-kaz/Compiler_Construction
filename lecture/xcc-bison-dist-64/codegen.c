@@ -282,8 +282,7 @@ static void codegen_exp(struct AST *ast) {
 
         struct String *string = string_lookup(ast->u.id);
         assert(string != NULL);
-        emit_code(ast, "\tleaq    %s.%s(%%rip), %%rax \t# \"%s\"\n",
-                  LABEL_PREFIX, string->label, string->data);
+        emit_code(ast, "\tleaq    %s.%s(%%rip), %%rax \t# \"%s\"\n", LABEL_PREFIX, string->label, string->data);
         emit_code(ast, "\tpushq   %%rax\n");
     } else if (!strcmp(ast->ast_type, "AST_expression_id")) {
         codegen_exp_id(ast);
