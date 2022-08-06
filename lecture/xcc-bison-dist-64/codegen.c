@@ -246,7 +246,7 @@ codegen_exp_funcall(struct AST *ast_func) {
 
 static void codegen_exp(struct AST *ast) {
     /*
-     *   AST_expression_id : identifier 変数名
+     *  AST_expression_id : identifier 変数名
      *  AST_expression_int : int
      *  AST_expression_long : long
      *  AST_expression_char : char
@@ -261,7 +261,7 @@ static void codegen_exp(struct AST *ast) {
      *  AST_expression_mul : * 演算子
      *  AST_expression_div : / 演算子
      *  AST_expression_unary : + - ! 単項演算子
-     *  AST_expression_list : 配列 int * 
+     *  AST_expression_list : 配列 int *
      *  AST_expression_funcall1 : 関数呼び出し1
      *  AST_expression_funcall2 : 関数呼び出し2
      *  AST_expression_paren : 括弧 ()
