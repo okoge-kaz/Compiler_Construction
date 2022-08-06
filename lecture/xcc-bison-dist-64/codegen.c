@@ -174,8 +174,7 @@ static void codegen_exp_id(struct AST *ast) {
     }
 }
 
-static void
-codegen_exp_funcall(struct AST *ast_func) {
+static void codegen_exp_funcall(struct AST *ast_func) {
     struct AST *ast, *ast_exp;
     int args_size = 0, narg = 0;
     char *regs[] = {"%rdi", "%rsi", "%rdx", "%rcx", "%r8", "%r9"};
