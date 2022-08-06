@@ -23,3 +23,27 @@ clean:
 wc:
 	make clean
 	wc *.[chly]
+
+test:
+	make clean
+	make
+	make test0
+	make test1
+	make test2
+	make test3
+
+test0:
+	make
+	sh test.sh kadai0
+
+test1:
+	make
+	sh test.sh kadai1
+
+test2:
+	make
+	sh test.sh kadai2
+
+test3:
+	make
+	sh test.sh kadai3
