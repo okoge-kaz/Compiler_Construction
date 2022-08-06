@@ -269,6 +269,7 @@ static void codegen_exp(struct AST *ast) {
          *  AST_expression_id : identifier 変数名
          */
         codegen_exp_id(ast);
+
     } else if (!strcmp(ast->ast_type, "AST_expression_int") ||
                !strcmp(ast->ast_type, "AST_expression_char") ||
                !strcmp(ast->ast_type, "AST_expression_long")) {
@@ -279,6 +280,7 @@ static void codegen_exp(struct AST *ast) {
          */
         emit_code(ast, "\tmovq    $0x%lx, %%rax\n", ast->u.long_val);
         emit_code(ast, "\tpushq   %%rax\n");
+
     } else if (!strcmp(ast->ast_type, "AST_expression_string")) {
         /*
          *  AST_expression_string : string (char*)
