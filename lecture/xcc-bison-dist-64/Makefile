@@ -35,15 +35,19 @@ test:
 test0:
 	make
 	sh test.sh kadai0
+	make clean
 
 test1:
 	make
 	sh test.sh kadai1
+	make clean
 
 test2:
 	make
 	sh test.sh kadai2
+	make clean
 
 test3:
 	make
 	sh test.sh kadai3
+	make clean
