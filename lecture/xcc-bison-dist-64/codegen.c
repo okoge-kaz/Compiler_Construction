@@ -290,6 +290,19 @@ static void codegen_exp(struct AST *ast) {
         assert(string != NULL);
         emit_code(ast, "\tleaq    %s.%s(%%rip), %%rax \t# \"%s\"\n", LABEL_PREFIX, string->label, string->data);
         emit_code(ast, "\tpushq   %%rax\n");
+
+    } else if (!strcmp(ast->ast_type, "AST_expression_assign")) {
+        /*
+         *  AST_expression_assign : = 代入
+         */
+        codegen_exp(ast->child[0]);
+        codegen_exp(ast->child[1]);
+
+        emit_code(ast, "\tpopq    %%rcx\n");
+        emit_code(ast, "\tpopq    %%rax\n");
+        emit_code(ast, "\tmovq    %%rcx, %%rax\n");
+        emit_code(ast, "\tpushq   %%rax\n");
+
     } else if (!strcmp(ast->ast_type, "AST_expression_funcall1") || !strcmp(ast->ast_type, "AST_expression_funcall2")) {
         codegen_exp_funcall(ast);
         /*
