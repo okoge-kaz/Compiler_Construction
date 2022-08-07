@@ -165,6 +165,7 @@ static void codegen_exp_id(struct AST *ast) {
                 emit_code(ast, "\tpushq   %%rax\n");
             } else {
                 emit_code(ast, "\tpushq   _%s(%%rip)\n", sym->name);
+                printf("\t# push global variable %s\n", sym->name);
             }
             break;
         case NS_LABEL: /* falling through */
@@ -268,6 +269,7 @@ static void codegen_exp(struct AST *ast) {
         /*
          *  AST_expression_id : identifier 変数名
          */
+        printf("\t# codegen_exp_id called\n");
         codegen_exp_id(ast);
 
     } else if (!strcmp(ast->ast_type, "AST_expression_int") ||
