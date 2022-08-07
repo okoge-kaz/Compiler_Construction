@@ -98,9 +98,10 @@ L_while_0:
 	# push global variable i
 	movq    $0x2, %rax
 	pushq   %rax
-	popq    %rdx
+	popq    %rbx
 	popq    %rax
-	idivq   %rdx
+	cqto
+	idivq   %rbx
 	pushq   %rax
 	movq    $0x1, %rax
 	pushq   %rax
