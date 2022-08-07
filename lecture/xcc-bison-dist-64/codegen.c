@@ -294,14 +294,15 @@ static void codegen_exp(struct AST *ast) {
     } else if (!strcmp(ast->ast_type, "AST_expression_assign")) {
         /*
          *  AST_expression_assign : = 代入
+         *  以下のように 右辺 -> 左辺の順にするのは、スタックに積まれる値の順番を考えてのこと
          */
-        codegen_exp(ast->child[0]);  // 左辺
-        codegen_exp(ast->child[1]);  // 右辺
+        codegen_exp(ast->child[1]);  // 右辺 代入する値
+        codegen_exp(ast->child[0]);  // 左辺 代入先アドレス
 
-        emit_code(ast, "\tpopq    %%rcx\n");
-        emit_code(ast, "\tpopq    %%rax\n");
-        emit_code(ast, "\tmovq    %%rcx, %%rax\n");
-        emit_code(ast, "\tpushq   %%rax\n");
+        emit_code(ast, "\tpopq    %%rax\n");// rax := 代入先アドレス
+        emit_code(ast, "\tpopq    %%rcx\n");// rcx := 代入する値
+        emit_code(ast, "\tmovq    %%rcx, (%%rax)\n");
+        emit_code(ast, "\tpushq   %%rcx\n");
 
     } else if (!strcmp(ast->ast_type, "AST_expression_lor") ||
                !strcmp(ast->ast_type, "AST_expression_land")) {
