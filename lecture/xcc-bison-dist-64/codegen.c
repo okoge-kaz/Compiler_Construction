@@ -540,14 +540,20 @@ static void codegen_stmt(struct AST *ast_stmt) {
          */
         static int while_label_id = 0;
 
-        emit_code(ast_stmt, ".L_while_%d:\n", while_label_id);
+        emit_code(ast_stmt, "L_while_%d:\n", while_label_id);
+
+        // while の条件解釈
         codegen_exp(ast_stmt->child[0]);
         emit_code(ast_stmt, "\tpopq    %%rax\n");
+
         emit_code(ast_stmt, "\tcmpq    $0, %%rax\n");
-        emit_code(ast_stmt, "\tje      .L_while_%d\n", while_label_id + 1);
+        emit_code(ast_stmt, "\tje      L_while_%d\n", while_label_id + 1);  // 0 == %rax
+
+        // while 文のブロック処理
         codegen_stmt(ast_stmt->child[1]);
-        emit_code(ast_stmt, "\tjmp     .L_while_%d\n", while_label_id);
-        emit_code(ast_stmt, ".L_while_%d:\n", while_label_id + 1);
+
+        emit_code(ast_stmt, "\tjmp     L_while_%d\n", while_label_id);
+        emit_code(ast_stmt, "L_while_%d:\n", while_label_id + 1);
 
         while_label_id += 2;
 
