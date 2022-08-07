@@ -330,6 +330,27 @@ static void codegen_exp(struct AST *ast) {
         }
 
         emit_code(ast, "\tpushq   %%rax\n");
+
+    } else if (!strcmp(ast->ast_type, "AST_expression_mul") ||
+               !strcmp(ast->ast_type, "AST_expression_div")) {
+        /*
+         *  AST_expression_mul : * 演算子 乗算
+         *  AST_expression_div : / 演算子 除算
+         */
+        codegen_exp(ast->child[0]);  // 左辺
+        codegen_exp(ast->child[1]);  // 右辺
+
+        emit_code(ast, "\tpopq    %%rdx\n");
+        emit_code(ast, "\tpopq    %%rax\n");
+
+        if (!strcmp(ast->ast_type, "AST_expression_mul")) {
+            emit_code(ast, "\timulq   %%rdx, %%rax\n");
+        } else if (!strcmp(ast->ast_type, "AST_expression_div")) {
+            emit_code(ast, "\tidivq   %%rdx\n");
+        }
+
+        emit_code(ast, "\tpushq   %%rax\n");
+
     } else if (!strcmp(ast->ast_type, "AST_expression_funcall1") ||
                !strcmp(ast->ast_type, "AST_expression_funcall2")) {
         codegen_exp_funcall(ast);
