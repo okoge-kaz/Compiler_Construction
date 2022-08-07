@@ -411,9 +411,9 @@ static void codegen_exp(struct AST *ast) {
             /*
              *  < 比較演算子
              */
-            emit_code(ast, "\tcmpq    %%rdx, %%rax\n");
-            emit_code(ast, "\tsetl    %%al\n");
-            emit_code(ast, "\tmovzbq  %%al, %%rax\n");
+            emit_code(ast, "\tcmpq    %%rdx, %%rax\n");  // rax < rdx ? 1 : 0
+            emit_code(ast, "\tsetl    %%al\n");          // al := rax < rdx ? 1 : 0
+            emit_code(ast, "\tmovzbq  %%al, %%rax\n");   // rax := rax < rdx ? 1 : 0
 
         } else if (!strcmp(ast->ast_type, "AST_expression_add")) {
             /*
