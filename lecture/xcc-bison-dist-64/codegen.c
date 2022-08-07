@@ -367,6 +367,10 @@ static void codegen_exp(struct AST *ast) {
             emit_code(ast, "\tmovzbq  %%al, %%rax\n");
 
         } else if (!strcmp(ast->ast_type, "AST_expression_add")) {
+            /*
+             *  + 演算子
+             *  *(%rax) += %rdx
+             */
             emit_code(ast, "\taddq    %%rdx, %%rax\n");
         } else if (!strcmp(ast->ast_type, "AST_expression_sub")) {
             emit_code(ast, "\tsubq    %%rdx, %%rax\n");
