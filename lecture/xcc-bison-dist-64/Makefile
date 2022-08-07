@@ -40,6 +40,7 @@ test0:
 test1:
 	make
 	sh test.sh kadai1
+	sh test.sh kadai1-old
 	make clean
 
 test2:
