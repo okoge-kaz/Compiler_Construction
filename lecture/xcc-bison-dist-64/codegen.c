@@ -295,12 +295,48 @@ static void codegen_exp(struct AST *ast) {
         /*
          *  AST_expression_assign : = 代入
          */
+        codegen_exp(ast->child[0]);  // 左辺
+        codegen_exp(ast->child[1]);  // 右辺
+
+        emit_code(ast, "\tpopq    %%rcx\n");
+        emit_code(ast, "\tpopq    %%rax\n");
+        emit_code(ast, "\tmovq    %%rcx, %%rax\n");
+        emit_code(ast, "\tpushq   %%rax\n");
+
+    } else if (!strcmp(ast->ast_type, "AST_expression_lor") ||
+               !strcmp(ast->ast_type, "AST_expression_land")) {
+        /*
+         *  AST_expression_lor : || 論理演算子 OR
+         *  AST_expression_land : && 論理演算子 AND
+         */
         codegen_exp(ast->child[0]);
         codegen_exp(ast->child[1]);
 
         emit_code(ast, "\tpopq    %%rcx\n");
         emit_code(ast, "\tpopq    %%rax\n");
-        emit_code(ast, "\tmovq    %%rcx, %%rax\n");
+
+        if (!strcmp(ast->ast_type, "AST_expression_lor")) {
+            emit_code(ast, "\torq     %%rcx, %%rax\n");
+        } else {
+            emit_code(ast, "\tandq    %%rcx, %%rax\n");
+        }
+
+        emit_code(ast, "\tpushq   %%rax\n");
+
+    } else if (!strcmp(ast->ast_type, "AST_expression_eq")) {
+        /*
+         *  AST_expression_eq : == 比較演算子
+         */
+        codegen_exp(ast->child[0]);
+        codegen_exp(ast->child[1]);
+
+        emit_code(ast, "\tpopq    %%rcx\n");
+        emit_code(ast, "\tpopq    %%rax\n");
+
+        emit_code(ast, "\tcmpq    %%rcx, %%rax\n");
+        emit_code(ast, "\tsete    %s\n", ast->child[0]->u.id);// この辺りの処理が適切である保証はない
+        emit_code(ast, "\tmovzbq  %s, %%rax\n", ast->child[0]->u.id);
+
         emit_code(ast, "\tpushq   %%rax\n");
 
     } else if (!strcmp(ast->ast_type, "AST_expression_less") ||
