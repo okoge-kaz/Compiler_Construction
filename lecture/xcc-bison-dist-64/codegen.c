@@ -560,20 +560,22 @@ static void codegen_stmt(struct AST *ast_stmt) {
          *  AST_statement_ifelse : if (条件) { 処理 } else { 処理 }
          */
         static int if_else_label_id = 0;
+        if_else_label_id += 2;
+
+        int local_if_label_id = if_else_label_id - 2;
+        int local_else_label_id = if_else_label_id - 1;
 
         codegen_exp(ast_stmt->child[0]);
 
         emit_code(ast_stmt, "\tpopq    %%rax\n");
         emit_code(ast_stmt, "\tcmpq    $0, %%rax\n");
 
-        emit_code(ast_stmt, "\tje      L_if_else_%d\n", if_else_label_id);
+        emit_code(ast_stmt, "\tje      L_if_else_%d\n", local_if_label_id);
         codegen_stmt(ast_stmt->child[1]);
-        emit_code(ast_stmt, "\tjmp     L_if_else_%d\n", if_else_label_id + 1);
-        emit_code(ast_stmt, "L_if_else_%d:\n", if_else_label_id);
+        emit_code(ast_stmt, "\tjmp     L_if_else_%d\n", local_else_label_id);
+        emit_code(ast_stmt, "L_if_else_%d:\n", local_if_label_id);
         codegen_stmt(ast_stmt->child[2]);
-        emit_code(ast_stmt, "L_if_else_%d:\n", if_else_label_id + 1);
-
-        if_else_label_id += 2;
+        emit_code(ast_stmt, "L_if_else_%d:\n", local_else_label_id);
 
     } else if (!strcmp(ast_stmt->ast_type, "AST_statement_while")) {
         /*
