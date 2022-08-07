@@ -21,6 +21,7 @@ _main:
 	pushq   %rax
 	leaq    L.XCC.STR0(%rip), %rax 	# "hello, world, %d, %d\n"
 	pushq   %rax
+	# codegen_exp_id called
 	movq    _printf@GOTPCREL(%rip), %rax
 	pushq   %rax
 	popq    %rax
