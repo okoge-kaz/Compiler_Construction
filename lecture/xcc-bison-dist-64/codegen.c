@@ -540,6 +540,7 @@ static void codegen_stmt(struct AST *ast_stmt) {
     } else if (!strcmp(ast_stmt->ast_type, "AST_statement_if")) {
         /*
          *  AST_statement_if : if (条件) { 処理 }
+         *  ラベルの付け方に工夫をしないとネスト構造になった際に static int が更新されてしまい変なことになる。
          */
         static int if_label_id = 0;
 
@@ -558,6 +559,7 @@ static void codegen_stmt(struct AST *ast_stmt) {
     } else if (!strcmp(ast_stmt->ast_type, "AST_statement_ifelse")) {
         /*
          *  AST_statement_ifelse : if (条件) { 処理 } else { 処理 }
+         *  ラベルの付け方に工夫をしないとネスト構造になった際に static int が更新されてしまい変なことになる。
          */
         static int if_else_label_id = 0;
         if_else_label_id += 2;
@@ -580,6 +582,7 @@ static void codegen_stmt(struct AST *ast_stmt) {
     } else if (!strcmp(ast_stmt->ast_type, "AST_statement_while")) {
         /*
          *  AST_statement_while : while (条件) { ステートメント }
+         *  ラベルの付け方に工夫をしないとネスト構造になった際に static int が更新されてしまい変なことになる。
          */
         static int while_label_id = 0;
         int local_while_label_id = while_label_id;
