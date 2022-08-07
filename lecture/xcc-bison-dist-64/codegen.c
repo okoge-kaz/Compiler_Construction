@@ -434,15 +434,23 @@ static void codegen_exp(struct AST *ast) {
          *  AST_expression_mul : * 演算子 乗算
          *  AST_expression_div : / 演算子 除算
          */
-        codegen_exp(ast->child[0]);  // 左辺
-        codegen_exp(ast->child[1]);  // 右辺
+        codegen_exp(ast->child[0]);  // left value
+        codegen_exp(ast->child[1]);  // right value
 
-        emit_code(ast, "\tpopq    %%rdx\n");
-        emit_code(ast, "\tpopq    %%rax\n");
+        emit_code(ast, "\tpopq    %%rdx\n");  // rdx := right value
+        emit_code(ast, "\tpopq    %%rax\n");  // rax := left value
 
         if (!strcmp(ast->ast_type, "AST_expression_mul")) {
+            /*
+             *  * 演算子
+             *  rax *= rdx
+             */
             emit_code(ast, "\timulq   %%rdx, %%rax\n");
         } else if (!strcmp(ast->ast_type, "AST_expression_div")) {
+            /*
+             *  / 演算子
+             *  rax /= rdx
+             */
             emit_code(ast, "\tidivq   %%rdx\n");
         }
 
