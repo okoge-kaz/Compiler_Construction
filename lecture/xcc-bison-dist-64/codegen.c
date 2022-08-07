@@ -329,11 +329,11 @@ static void codegen_exp(struct AST *ast) {
         /*
          *  AST_expression_eq : == 比較演算子
          */
-        codegen_exp(ast->child[0]);// 左辺
-        codegen_exp(ast->child[1]);// 右辺
+        codegen_exp(ast->child[0]);  // left value
+        codegen_exp(ast->child[1]);  // right value
 
-        emit_code(ast, "\tpopq    %%rcx\n");// rcx := 右辺
-        emit_code(ast, "\tpopq    %%rax\n");// rax := 左辺
+        emit_code(ast, "\tpopq    %%rcx\n");  // rcx := right value
+        emit_code(ast, "\tpopq    %%rax\n");  // rax := left value
 
         emit_code(ast, "\tcmpq    %%rcx, %%rax\n");
         emit_code(ast, "\tsete    %%al\n");
