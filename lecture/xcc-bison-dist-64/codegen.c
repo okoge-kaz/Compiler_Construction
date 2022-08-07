@@ -372,7 +372,11 @@ static void codegen_exp(struct AST *ast) {
              *  *(%rax) += %rdx
              */
             emit_code(ast, "\taddq    %%rdx, %%rax\n");
-        } else if (!strcmp(ast->ast_type, "AST_expression_sub")) {
+
+        } else {
+            /*
+             *  - 演算子
+             */
             emit_code(ast, "\tsubq    %%rdx, %%rax\n");
         }
 
