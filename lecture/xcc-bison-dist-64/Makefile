@@ -40,12 +40,21 @@ test0:
 test1:
 	make
 	sh test.sh kadai1
+	make clean
+
+test1-old:
+	make
 	sh test.sh kadai1-old
 	make clean
 
 test2:
 	make
 	sh test.sh kadai2
+	make clean
+
+test2-easy:
+	make
+	sh test.sh kadai2-easy
 	make clean
 
 test3:
