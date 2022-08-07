@@ -415,7 +415,7 @@ static void codegen_exp(struct AST *ast) {
         } else if (!strcmp(ast->ast_type, "AST_expression_add")) {
             /*
              *  + 演算子
-             *  *(%rax) += %rdx
+             *  %rax += %rdx
              */
             emit_code(ast, "\taddq    %%rdx, %%rax\n");
 
