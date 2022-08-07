@@ -11,7 +11,7 @@ int main() {
             }
         } else if (i * i == i) {
             printf("%d * %d == %d\n", i, i, i);
-        } else if (2 < i && i < 8) {
+        } if (2 < i && i < 8) {
             printf("2 < %d < 8\n", i);
         } else {
             printf("else\n");
