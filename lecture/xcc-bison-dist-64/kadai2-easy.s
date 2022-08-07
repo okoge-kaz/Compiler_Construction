@@ -98,10 +98,10 @@ L_while_0:
 	# push global variable i
 	movq    $0x2, %rax
 	pushq   %rax
-	popq    %rbx
+	popq    %r10
 	popq    %rax
 	cqto
-	idivq   %rbx
+	idivq   %r10
 	pushq   %rax
 	movq    $0x1, %rax
 	pushq   %rax
@@ -162,7 +162,7 @@ L_if_else_0:
 	pushq   %rax
 	popq    %rax
 	cmpq    $0, %rax
-	je      L_if_else_2
+	je      L_if_1
 # save caller-save registers
 	pushq   %rdi
 	pushq   %rsi
@@ -199,8 +199,8 @@ L_if_else_0:
 	popq   %rdi
 	pushq   %rax
 	addq    $8, %rsp
-	jmp     L_if_else_3
-L_if_else_2:
+L_if_1:
+L_if_else_1:
 	# codegen_exp_id called
 	pushq   _i(%rip)
 	# push global variable i
@@ -215,7 +215,7 @@ L_if_else_2:
 	# child 0:AST_expression_less
 	popq    %rax
 	cmpq    $0, %rax
-	jne      L_and_0
+	je      L_and_0
 	movq    $0x8, %rax
 	pushq   %rax
 	# codegen_exp_id called
@@ -227,16 +227,16 @@ L_if_else_2:
 	setl    %al
 	movzbq  %al, %rax
 	pushq   %rax
-	# child 1:AST_expression_less
+	# and child 1:AST_expression_less
 	popq    %rax
 	pushq   %rax
 	jmp     L_and_1
 L_and_0:
-	pushq   $1
+	pushq   $0
 L_and_1:
 	popq    %rax
 	cmpq    $0, %rax
-	je      L_if_else_4
+	je      L_if_else_2
 # save caller-save registers
 	pushq   %rdi
 	pushq   %rsi
@@ -265,8 +265,8 @@ L_and_1:
 	popq   %rdi
 	pushq   %rax
 	addq    $8, %rsp
-	jmp     L_if_else_5
-L_if_else_4:
+	jmp     L_if_else_3
+L_if_else_2:
 # save caller-save registers
 	pushq   %rdi
 	pushq   %rsi
@@ -291,9 +291,7 @@ L_if_else_4:
 	popq   %rdi
 	pushq   %rax
 	addq    $8, %rsp
-L_if_else_5:
 L_if_else_3:
-L_if_else_1:
 	# child 1:AST_expression_add
 	movq    $0x1, %rax
 	pushq   %rax
@@ -332,7 +330,7 @@ L_while_2:
 	# child 0:AST_expression_eq
 	popq    %rax
 	cmpq    $0, %rax
-	je      L_or_0
+	jne      L_or_2
 	# codegen_exp_id called
 	pushq   _i(%rip)
 	# push global variable i
@@ -344,13 +342,13 @@ L_while_2:
 	sete    %al
 	movzbq  %al, %rax
 	pushq   %rax
-	# child 1:AST_expression_eq
+	# or child 1:AST_expression_eq
 	popq    %rax
 	pushq   %rax
-	jmp     L_or_1
-L_or_0:
-	pushq   $0
-L_or_1:
+	jmp     L_or_3
+L_or_2:
+	pushq   $1
+L_or_3:
 	popq    %rax
 	cmpq    $0, %rax
 	je      L_while_3
