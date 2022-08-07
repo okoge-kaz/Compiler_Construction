@@ -437,14 +437,14 @@ static void codegen_exp(struct AST *ast) {
         codegen_exp(ast->child[0]);  // left value
         codegen_exp(ast->child[1]);  // right value
 
-        emit_code(ast, "\tpopq    %%rdx\n");  // rdx := right value
-        emit_code(ast, "\tpopq    %%rax\n");  // rax := left value
-
         if (!strcmp(ast->ast_type, "AST_expression_mul")) {
             /*
              *  * 演算子
              *  rax *= rdx
              */
+            emit_code(ast, "\tpopq    %%rdx\n");  // rdx := right value
+            emit_code(ast, "\tpopq    %%rax\n");  // rax := left value
+
             emit_code(ast, "\timulq   %%rdx, %%rax\n");
         } else if (!strcmp(ast->ast_type, "AST_expression_div")) {
             /*
