@@ -449,19 +449,20 @@ static void codegen_exp(struct AST *ast) {
             emit_code(ast, "\tpopq    %%rax\n");  // rax := left value
 
             emit_code(ast, "\timulq   %%rdx, %%rax\n");
+            emit_code(ast, "\tpushq   %%rax\n");
+
         } else if (!strcmp(ast->ast_type, "AST_expression_div")) {
             /*
              *  / 演算子
              *  %rax = (%rdx:%rax) / %rbx
              */
-            emit_code(ast, "\tpopq    %%rbx\n");  // rbx := right value
+            emit_code(ast, "\tpopq    %%r10\n");  // r10 := right value
             emit_code(ast, "\tpopq    %%rax\n");  // rax := left value
             // sign extend %rax -> %rdx:%rax
             emit_code(ast, "\tcqto\n");  // SignExtend(R[%rax]) -> R[%rdx:%rax]
-            emit_code(ast, "\tidivq   %%rbx\n");
+            emit_code(ast, "\tidivq   %%r10\n");
+            emit_code(ast, "\tpushq   %%rax\n");
         }
-
-        emit_code(ast, "\tpushq   %%rax\n");
 
     } else if (!strcmp(ast->ast_type, "AST_expression_unary")) {
         /*
