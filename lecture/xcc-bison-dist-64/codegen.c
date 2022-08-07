@@ -327,48 +327,51 @@ static void codegen_exp(struct AST *ast) {
         static int or_label_id = 0;
         static int and_label_id = 0;
 
-        codegen_exp(ast->child[0]);  // left value
-        printf("\t# child 0:%s\n", ast->child[0]->ast_type);
+        int local_or_label_id = or_label_id;
+        int local_and_label_id = and_label_id;
+        or_label_id += 2;
+        and_label_id += 2;
+
+        codegen_exp(ast->child[0]);                           // evaluate left value
+        printf("\t# child 0:%s\n", ast->child[0]->ast_type);  // left value abstract syntax tree's type
 
         if (!strcmp(ast->ast_type, "AST_expression_lor")) {
             /*
              *  AST_expression_lor : || 論理演算子 OR
              */
-            emit_code(ast, "\tpopq    %%rax\n");  // rax := left value
+            emit_code(ast, "\tpopq    %%rax\n");  // %rax := left value (0 or 1)
             // if left_value == true -> true
             emit_code(ast, "\tcmpq    $0, %%rax\n");
-            emit_code(ast, "\tje      L_or_%d\n", or_label_id);  // L0:
+            emit_code(ast, "\tjne      L_or_%d\n", local_or_label_id);  // L0: %rax != 0 -> %rax == 1 -> true
 
             // if left_value == false -> calc right value
             codegen_exp(ast->child[1]);  // right value
-            printf("\t# child 1:%s\n", ast->child[1]->ast_type);
-            emit_code(ast, "\tpopq    %%rax\n");                     // rax := right value
-            emit_code(ast, "\tpushq   %%rax\n");                     // push right value(すでに評価済みなのでpush)
-            emit_code(ast, "\tjmp     L_or_%d\n", or_label_id + 1);  // L1 left_value == false -> right_value
+            printf("\t# or child 1:%s\n", ast->child[1]->ast_type);
+            emit_code(ast, "\tpopq    %%rax\n");                           // rax := right value
+            emit_code(ast, "\tpushq   %%rax\n");                           // push right value(すでに評価済みなのでpush)
+            emit_code(ast, "\tjmp     L_or_%d\n", local_or_label_id + 1);  // L1 left_value == false -> right_value
 
-            emit_code(ast, "L_or_%d:\n", or_label_id);  // L0:
-            emit_code(ast, "\tpushq   $0\n");
-            emit_code(ast, "L_or_%d:\n", or_label_id + 1);  // L1
-            or_label_id += 2;
+            emit_code(ast, "L_or_%d:\n", local_or_label_id);      // L0:
+            emit_code(ast, "\tpushq   $1\n");                     // push true
+            emit_code(ast, "L_or_%d:\n", local_or_label_id + 1);  // L1
         } else {
             /*
              *  AST_expression_land : && 論理演算子 AND
              */
             // if left_value == false -> false
-            emit_code(ast, "\tpopq    %%rax\n");  // rax := left value
+            emit_code(ast, "\tpopq    %%rax\n");  // rax := left value (0 or 1)
             emit_code(ast, "\tcmpq    $0, %%rax\n");
-            emit_code(ast, "\tjne      L_and_%d\n", and_label_id);  // L0:
+            emit_code(ast, "\tje      L_and_%d\n", local_and_label_id);  // L0: %rax == 0 -> false
             // if left_value == true -> calc right value
             codegen_exp(ast->child[1]);  // right value
-            printf("\t# child 1:%s\n", ast->child[1]->ast_type);
-            emit_code(ast, "\tpopq    %%rax\n");                       // rax := right value
-            emit_code(ast, "\tpushq   %%rax\n");                       // push right value(すでに評価済みなのでpush)
-            emit_code(ast, "\tjmp     L_and_%d\n", and_label_id + 1);  // L1 left_value == true -> right_value
+            printf("\t# and child 1:%s\n", ast->child[1]->ast_type);
+            emit_code(ast, "\tpopq    %%rax\n");                             // rax := right value
+            emit_code(ast, "\tpushq   %%rax\n");                             // push right value(すでに評価済みなのでpush)
+            emit_code(ast, "\tjmp     L_and_%d\n", local_and_label_id + 1);  // L1 left_value == true -> right_value
 
-            emit_code(ast, "L_and_%d:\n", and_label_id);      // L0: left_value == false -> push false
-            emit_code(ast, "\tpushq   $1\n");                 // 0以外なら false 扱いになるので 1をpush
-            emit_code(ast, "L_and_%d:\n", and_label_id + 1);  // L1
-            and_label_id += 2;
+            emit_code(ast, "L_and_%d:\n", local_and_label_id);      // L0: left_value == false -> push false
+            emit_code(ast, "\tpushq   $0\n");                       // push false
+            emit_code(ast, "L_and_%d:\n", local_and_label_id + 1);  // L1
         }
 
     } else if (!strcmp(ast->ast_type, "AST_expression_eq")) {
