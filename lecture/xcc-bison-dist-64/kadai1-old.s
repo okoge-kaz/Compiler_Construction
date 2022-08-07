@@ -20,33 +20,49 @@ _main:
 	pushq   %rbp
 	movq    %rsp, %rbp
 	subq    $0, %rsp
-	pushq   _i(%rip)
+	# child 1:AST_expression_long
 	movq    $0x5, %rax
 	pushq   %rax
-	popq    %rax
-	popq    %r10
-	movq    %r10, 0(%rax)
-	pushq   %r10
-	addq    $8, %rsp
-	pushq   _sum(%rip)
-	movq    $0x0, %rax
-	pushq   %rax
-	popq    %rax
-	popq    %r10
-	movq    %r10, 0(%rax)
-	pushq   %r10
-	addq    $8, %rsp
-.L_while_0:
-	movq    $0x0, %rax
-	pushq   %rax
+	# child 0:AST_expression_id
+	# codegen_exp_id called
 	pushq   _i(%rip)
-	popq    %rdx
+	# push global variable i
 	popq    %rax
-	cmpq    %rax, %rdx
+	popq    %rcx
+	movq    %rcx, %rax
+	# u.id = i
+	movq    %rax, _i(%rip)
+	pushq   %rcx
+	addq    $8, %rsp
+	# child 1:AST_expression_long
+	movq    $0x0, %rax
+	pushq   %rax
+	# child 0:AST_expression_id
+	# codegen_exp_id called
+	pushq   _sum(%rip)
+	# push global variable sum
+	popq    %rax
+	popq    %rcx
+	movq    %rcx, %rax
+	# u.id = sum
+	movq    %rax, _sum(%rip)
+	pushq   %rcx
+	addq    $8, %rsp
+L_while_0:
+	# codegen_exp_id called
+	pushq   _i(%rip)
+	# push global variable i
+	movq    $0x0, %rax
+	pushq   %rax
+	popq    %rax
+	popq    %rdx
+	cmpq    %rdx, %rax
+	setl    %al
+	movzbq  %al, %rax
 	pushq   %rax
 	popq    %rax
 	cmpq    $0, %rax
-	je      .L_while_1
+	je      L_while_1
 # save caller-save registers
 	pushq   %rdi
 	pushq   %rsi
@@ -54,9 +70,12 @@ _main:
 	pushq   %rcx
 	pushq   %r8
 	pushq   %r9
+	# codegen_exp_id called
 	pushq   _i(%rip)
+	# push global variable i
 	leaq    L.XCC.STR0(%rip), %rax 	# "i = %d\n"
 	pushq   %rax
+	# codegen_exp_id called
 	movq    _printf@GOTPCREL(%rip), %rax
 	pushq   %rax
 	popq    %rax
@@ -72,33 +91,51 @@ _main:
 	popq   %rdi
 	pushq   %rax
 	addq    $8, %rsp
-	pushq   _sum(%rip)
-	pushq   _sum(%rip)
+	# child 1:AST_expression_add
+	# codegen_exp_id called
 	pushq   _i(%rip)
-	popq    %rdx
+	# push global variable i
+	# codegen_exp_id called
+	pushq   _sum(%rip)
+	# push global variable sum
 	popq    %rax
+	popq    %rdx
 	addq    %rdx, %rax
 	pushq   %rax
+	# child 0:AST_expression_id
+	# codegen_exp_id called
+	pushq   _sum(%rip)
+	# push global variable sum
 	popq    %rax
-	popq    %r10
-	movq    %r10, 0(%rax)
-	pushq   %r10
+	popq    %rcx
+	movq    %rcx, %rax
+	# u.id = sum
+	movq    %rax, _sum(%rip)
+	pushq   %rcx
 	addq    $8, %rsp
-	pushq   _i(%rip)
-	pushq   _i(%rip)
+	# child 1:AST_expression_sub
 	movq    $0x1, %rax
 	pushq   %rax
-	popq    %rdx
+	# codegen_exp_id called
+	pushq   _i(%rip)
+	# push global variable i
 	popq    %rax
+	popq    %rdx
 	subq    %rdx, %rax
 	pushq   %rax
+	# child 0:AST_expression_id
+	# codegen_exp_id called
+	pushq   _i(%rip)
+	# push global variable i
 	popq    %rax
-	popq    %r10
-	movq    %r10, 0(%rax)
-	pushq   %r10
+	popq    %rcx
+	movq    %rcx, %rax
+	# u.id = i
+	movq    %rax, _i(%rip)
+	pushq   %rcx
 	addq    $8, %rsp
-	jmp     .L_while_0
-.L_while_1:
+	jmp     L_while_0
+L_while_1:
 # save caller-save registers
 	pushq   %rdi
 	pushq   %rsi
@@ -106,9 +143,12 @@ _main:
 	pushq   %rcx
 	pushq   %r8
 	pushq   %r9
+	# codegen_exp_id called
 	pushq   _sum(%rip)
+	# push global variable sum
 	leaq    L.XCC.STR1(%rip), %rax 	# "sum = %d\n"
 	pushq   %rax
+	# codegen_exp_id called
 	movq    _printf@GOTPCREL(%rip), %rax
 	pushq   %rax
 	popq    %rax
