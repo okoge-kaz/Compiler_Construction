@@ -602,7 +602,7 @@ static void codegen_stmt(struct AST *ast_stmt) {
         emit_code(ast_stmt, "\tpopq    %%rax\n");
 
         emit_code(ast_stmt, "\tcmpq    $0, %%rax\n");
-        emit_code(ast_stmt, "\tje      L_while_%d\n", local_while_label_id + 1);  // 0 == %rax
+        emit_code(ast_stmt, "\tje      L_while_%d\n", local_while_label_id + 1);  // 0 == %rax なら while 文を抜ける
 
         // while 文のブロック処理
         codegen_stmt(ast_stmt->child[1]);
