@@ -381,9 +381,9 @@ static void codegen_exp(struct AST *ast) {
         emit_code(ast, "\tpopq    %%rcx\n");  // rcx := right value
         emit_code(ast, "\tpopq    %%rax\n");  // rax := left value
 
-        emit_code(ast, "\tcmpq    %%rcx, %%rax\n");
-        emit_code(ast, "\tsete    %%al\n");
-        emit_code(ast, "\tmovzbq  %%al, %%rax\n");
+        emit_code(ast, "\tcmpq    %%rax, %%rcx\n");  // rax == rcx
+        emit_code(ast, "\tsete    %%al\n");          // al := rax == rcx ? 1 : 0
+        emit_code(ast, "\tmovzbq  %%al, %%rax\n");   // rax := rax == rcx ? 1 : 0
 
         emit_code(ast, "\tpushq   %%rax\n");
 
