@@ -608,6 +608,10 @@ static void codegen_block(struct AST *ast_block) {
 }
 
 static void codegen_dec(struct AST *ast) {
+    /*
+     *  AST_declaration : type_specifier declarator ;
+     *  変数宣言の処理??
+     */
     assert(!strcmp(ast->ast_type, "AST_declaration"));
     if (ast->type->size <= 0)
         return;
