@@ -352,15 +352,20 @@ static void codegen_exp(struct AST *ast) {
          * 方針としてはスタック機械としての振る舞いを実装する。
          * まず 2回 pop する -> 演算ごとに分岐 -> 演算 -> 結果を push する
          */
-        codegen_exp(ast->child[0]);  // 左辺: これがいるかは要検討(構文木は下から上に登っていくので)
-        codegen_exp(ast->child[1]);  // 右辺: これがいるかは要検討
+        codegen_exp(ast->child[1]);  // right
+        codegen_exp(ast->child[0]);  // left
 
-        emit_code(ast, "\tpopq    %%rdx\n");
-        emit_code(ast, "\tpopq    %%rax\n");
+        emit_code(ast, "\tpopq    %%rax\n");  // rax := left value
+        emit_code(ast, "\tpopq    %%rdx\n");  // rdx := right value
 
         if (!strcmp(ast->ast_type, "AST_expression_less")) {
-            emit_code(ast, "\tcmpq    %%rax, %%rdx\n");
-            emit_code(ast, "\tsetl    %s\n", ast->child[2]->u.id);
+            /*
+             *  < 比較演算子
+             */
+            emit_code(ast, "\tcmpq    %%rdx, %%rax\n");
+            emit_code(ast, "\tsetl    %%al\n");
+            emit_code(ast, "\tmovzbq  %%al, %%rax\n");
+
         } else if (!strcmp(ast->ast_type, "AST_expression_add")) {
             emit_code(ast, "\taddq    %%rdx, %%rax\n");
         } else if (!strcmp(ast->ast_type, "AST_expression_sub")) {
