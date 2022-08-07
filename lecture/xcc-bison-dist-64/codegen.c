@@ -310,16 +310,17 @@ static void codegen_exp(struct AST *ast) {
          *  AST_expression_lor : || 論理演算子 OR
          *  AST_expression_land : && 論理演算子 AND
          */
-        codegen_exp(ast->child[0]);
-        codegen_exp(ast->child[1]);
+        //TODO: 左辺だけをみて true か false かを先読みできるがその機能は未実装
+        codegen_exp(ast->child[0]);  // 左辺
+        codegen_exp(ast->child[1]);  // 右辺
 
-        emit_code(ast, "\tpopq    %%rcx\n");
-        emit_code(ast, "\tpopq    %%rax\n");
+        emit_code(ast, "\tpopq    %%rcx\n");// rcx := 右辺
+        emit_code(ast, "\tpopq    %%rax\n");// rax := 左辺
 
         if (!strcmp(ast->ast_type, "AST_expression_lor")) {
-            emit_code(ast, "\torq     %%rcx, %%rax\n");
+            emit_code(ast, "\torq     %%rcx, %%rax\n");// rax |= rcx
         } else {
-            emit_code(ast, "\tandq    %%rcx, %%rax\n");
+            emit_code(ast, "\tandq    %%rcx, %%rax\n");// rax &= rcx
         }
 
         emit_code(ast, "\tpushq   %%rax\n");
