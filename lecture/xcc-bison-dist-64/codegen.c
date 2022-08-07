@@ -548,9 +548,9 @@ static void codegen_stmt(struct AST *ast_stmt) {
         emit_code(ast_stmt, "\tpopq    %%rax\n");
         emit_code(ast_stmt, "\tcmpq    $0, %%rax\n");
 
-        emit_code(ast_stmt, "\tje      .L_if_%d\n", if_label_id);
+        emit_code(ast_stmt, "\tje      L_if_%d\n", if_label_id);
         codegen_stmt(ast_stmt->child[1]);
-        emit_code(ast_stmt, ".L_if_%d:\n", if_label_id);
+        emit_code(ast_stmt, "L_if_%d:\n", if_label_id);
 
         if_label_id++;
 
