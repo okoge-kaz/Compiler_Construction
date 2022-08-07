@@ -277,6 +277,7 @@ static void codegen_exp(struct AST *ast) {
          *  AST_expression_int : int
          *  AST_expression_char : char
          *  AST_expression_long : long
+         *  16進数表記 lx で rax ;= ast->u.long_valとする
          */
         emit_code(ast, "\tmovq    $0x%lx, %%rax\n", ast->u.long_val);
         emit_code(ast, "\tpushq   %%rax\n");
