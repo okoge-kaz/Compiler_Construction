@@ -543,16 +543,17 @@ static void codegen_stmt(struct AST *ast_stmt) {
          */
         static int if_label_id = 0;
 
+        int local_if_label = if_label_id;
+        if_label_id++;
+
         codegen_exp(ast_stmt->child[0]);
 
         emit_code(ast_stmt, "\tpopq    %%rax\n");
         emit_code(ast_stmt, "\tcmpq    $0, %%rax\n");
 
-        emit_code(ast_stmt, "\tje      L_if_%d\n", if_label_id);
+        emit_code(ast_stmt, "\tje      L_if_%d\n", local_if_label);
         codegen_stmt(ast_stmt->child[1]);
-        emit_code(ast_stmt, "L_if_%d:\n", if_label_id);
-
-        if_label_id++;
+        emit_code(ast_stmt, "L_if_%d:\n", local_if_label);
 
     } else if (!strcmp(ast_stmt->ast_type, "AST_statement_ifelse")) {
         /*
