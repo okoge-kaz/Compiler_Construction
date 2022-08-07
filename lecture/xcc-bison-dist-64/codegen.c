@@ -155,6 +155,10 @@ static void codegen_exp_id(struct AST *ast) {
             emit_code(ast, "\tpushq   %s\n", reg);
             break;
         case NS_GLOBAL:
+            /*
+             * グローバルスコープ
+             * 関数 or 関数以外かで場合分け
+             */
             // char型，int型には非対応
             if (sym->type->kind == TYPE_KIND_FUNCTION) {
                 if (is_library_func(sym->name)) {
@@ -164,6 +168,7 @@ static void codegen_exp_id(struct AST *ast) {
                 }
                 emit_code(ast, "\tpushq   %%rax\n");
             } else {
+                // 関数以外 := グローバル変数
                 emit_code(ast, "\tpushq   _%s(%%rip)\n", sym->name);
                 printf("\t# push global variable %s\n", sym->name);
             }
