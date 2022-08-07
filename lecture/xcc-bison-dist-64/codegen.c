@@ -334,7 +334,7 @@ static void codegen_exp(struct AST *ast) {
         emit_code(ast, "\tpopq    %%rax\n");
 
         emit_code(ast, "\tcmpq    %%rcx, %%rax\n");
-        emit_code(ast, "\tsete    %s\n", ast->child[0]->u.id);// この辺りの処理が適切である保証はない
+        emit_code(ast, "\tsete    %s\n", ast->child[0]->u.id);  // この辺りの処理が適切である保証はない
         emit_code(ast, "\tmovzbq  %s, %%rax\n", ast->child[0]->u.id);
 
         emit_code(ast, "\tpushq   %%rax\n");
