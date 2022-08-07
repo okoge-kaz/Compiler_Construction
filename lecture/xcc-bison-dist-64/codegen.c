@@ -296,12 +296,18 @@ static void codegen_exp(struct AST *ast) {
          *  AST_expression_assign : = 代入
          *  以下のように 右辺 -> 左辺の順にするのは、スタックに積まれる値の順番を考えてのこと
          */
+        printf("\t# child 1:%s\n", ast->child[1]->ast_type);
         codegen_exp(ast->child[1]);  // 右辺 代入する値
+
+        printf("\t# child 0:%s\n", ast->child[0]->ast_type);
         codegen_exp(ast->child[0]);  // 左辺 代入先アドレス
 
-        emit_code(ast, "\tpopq    %%rax\n");// rax := 代入先アドレス
-        emit_code(ast, "\tpopq    %%rcx\n");// rcx := 代入する値
-        emit_code(ast, "\tmovq    %%rcx, (%%rax)\n");
+        emit_code(ast, "\tpopq    %%rax\n");         // rax := 代入先アドレス 現状だと 代入先の値になっている
+        emit_code(ast, "\tpopq    %%rcx\n");         // rcx := 代入する値
+        emit_code(ast, "\tmovq    %%rcx, %%rax\n");  // これだけでは、代入ができていない
+        printf("\t# u.id = %s\n", ast->child[0]->child[0]->u.id);
+        emit_code(ast, "\tmovq    %%rax, _%s(%%rip)\n", ast->child[0]->child[0]->u.id);
+        // TODO: 5-codegen.pdf p.39 にあるように leaq を使ってアドレスを取得するように codegen_exp_id の動作を書き換えることも検討してみた方が良いかもしれない
         emit_code(ast, "\tpushq   %%rcx\n");
 
     } else if (!strcmp(ast->ast_type, "AST_expression_lor") ||
