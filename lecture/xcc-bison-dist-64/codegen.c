@@ -387,12 +387,55 @@ static void codegen_exp(struct AST *ast) {
 
         emit_code(ast, "\tpushq   %%rax\n");
 
+    } else if (!strcmp(ast->ast_type, "AST_expression_unary")) {
+        /*
+         *  AST_expression_unary : 単項演算子
+         */
+        codegen_exp(ast->child[0]);
+
+        emit_code(ast, "\tpopq    %%rax\n");
+
+        // -, ! に対応するものがないのでどう判断するか考え中
+        if (!strcmp(ast->child[0]->ast_type, "AST_expression_uminus")) {
+            emit_code(ast, "\tnegq    %%rax\n");
+        } else if (!strcmp(ast->child[0]->ast_type, "AST_expression_not")) {
+            emit_code(ast, "\tcmpl    $0, %%rax\n");
+            emit_code(ast, "\tsete    %s\n", ast->child[0]->u.id);
+            emit_code(ast, "\tmovzbq  %s, %%rax\n", ast->child[0]->u.id);
+        }
+
+        emit_code(ast, "\tpushq   %%rax\n");
+    } else if (!strcmp(ast->ast_type, "AST_expression_list")) {
+        /*
+         *  AST_expression_list : 配列要素参照
+         */
+        codegen_exp(ast->child[0]);
+        codegen_exp(ast->child[1]);
+
+        emit_code(ast, "\tpopq    %%rcx\n");
+        emit_code(ast, "\tpopq    %%rax\n");
+
+        // ここの処理の妥当性 未検証
+        emit_code(ast, "\tmovq    %%rcx, %%rdx\n");
+        emit_code(ast, "\tmulq    $8, %%rdx\n");
+        emit_code(ast, "\taddq    %%rdx, %%rax\n");
+
+        emit_code(ast, "\tpushq   %%rax\n");
     } else if (!strcmp(ast->ast_type, "AST_expression_funcall1") ||
                !strcmp(ast->ast_type, "AST_expression_funcall2")) {
+        /*
+         *  AST_expression_funcall1 : 関数呼び出し
+         *  AST_expression_funcall2 : 関数呼び出し
+         */
         codegen_exp_funcall(ast);
-
+    } else if (!strcmp(ast->ast_type, "AST_expression_paren")) {
+        /*
+         *  AST_expression_paren : 括弧
+         */
+        codegen_exp(ast->child[0]);
     } else {
-        //        assert (0);
+        printf("codegen_exp: unknown ast_type: %s\n", ast->ast_type);
+        assert(0);
     }
 }
 
