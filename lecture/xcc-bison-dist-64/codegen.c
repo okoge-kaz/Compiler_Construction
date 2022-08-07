@@ -543,10 +543,8 @@ static void codegen_stmt(struct AST *ast_stmt) {
         codegen_exp(ast_stmt->child[0]);
 
         emit_code(ast_stmt, "\tpopq    %%rax\n");
-        emit_code(ast_stmt, "\taddq    $8, %%rsp\n");
-
-        emit_code(ast_stmt, "\tjmp     .L%d\n", ast_stmt->child[0]->u.id);
-        // TODO: Label に関しては修正が必要
+        emit_code(ast_stmt, "\tpopq    %%rbp\n");
+        emit_code(ast_stmt, "\tret\n");
 
     } else {
         assert(0);
