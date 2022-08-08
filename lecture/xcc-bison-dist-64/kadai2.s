@@ -119,8 +119,8 @@ _main:
 	# assign child 0:AST_expression_id
 	# DEBUG NS_LOCAL left value i
 	# DEBUG NS_LOCAL left value i
-leaq -8(%rbp), %rax
-pushq %rax
+	leaq -8(%rbp), %rax
+	pushq %rax
 	popq    %rax
 	popq    %rcx
 	movq    %rcx, (%rax)
@@ -211,8 +211,8 @@ L_while_0:
 	# assign child 0:AST_expression_id
 	# DEBUG NS_LOCAL left value i
 	# DEBUG NS_LOCAL left value i
-leaq -8(%rbp), %rax
-pushq %rax
+	leaq -8(%rbp), %rax
+	pushq %rax
 	popq    %rax
 	popq    %rcx
 	movq    %rcx, (%rax)
