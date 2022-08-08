@@ -585,9 +585,9 @@ static void codegen_exp(struct AST *ast) {
          *
          *  ここで処理されるのは 右辺値 の unary operator のみ
          */
-        printf("\t# AST_expression_unary: %d\n", ast->num_child);
-        printf("\t# AST_expression_unary: %s\n", ast->child[0]->ast_type);
-        printf("\t# AST_expression_unary: %s\n", ast->child[1]->ast_type);
+        printf("\t# AST_expression_unary: num-child: %d\n", ast->num_child);
+        printf("\t# AST_expression_unary: child[0]: %s\n", ast->child[0]->ast_type);
+        printf("\t# AST_expression_unary: child[1]: %s\n", ast->child[1]->ast_type);
 
         if (!strcmp(ast->child[0]->ast_type, "AST_unary_operator_deref")) {
             /*
