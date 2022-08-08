@@ -419,8 +419,17 @@ static void codegen_exp(struct AST *ast) {
         printf("\t# assign child 1:%s\n", ast->child[1]->ast_type);
         codegen_exp(ast->child[1]);  // 右辺 代入する値
 
-        printf("\t# assign child 0:%s\n", ast->child[0]->ast_type);
-        codegen_exp_id_address(ast->child[0]);  // 左辺 代入先アドレス
+        if (!strcmp(ast->child[0]->ast_type, "AST_expression_unary")) {
+            /*
+             * *(address) = () のとき
+             * ast->child[0]->child[0] := AST_unary_operator_deref
+             * ast->child[0]->child[1] := AST_expression_id
+             */
+            codegen_exp(ast->child[0]->child[1]);
+        } else {
+            printf("\t# assign child 0:%s\n", ast->child[0]->ast_type);
+            codegen_exp_id_address(ast->child[0]);  // 左辺 代入先アドレス
+        }
 
         emit_code(ast, "\tpopq    %%rax\n");           // rax := 代入先アドレス
         emit_code(ast, "\tpopq    %%rcx\n");           // rcx := 代入する値
