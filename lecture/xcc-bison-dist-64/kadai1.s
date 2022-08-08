@@ -22,38 +22,37 @@ _main:
 	pushq   %rbp
 	movq    %rsp, %rbp
 	subq    $0, %rsp
-	# child 1:AST_expression_long
+	# assign child 1:AST_expression_long
 	movq    $0x5, %rax
 	pushq   %rax
-	# child 0:AST_expression_id
-	# codegen_exp_id called
-	pushq   _i(%rip)
-	# push global variable i
+	# assign child 0:AST_expression_id
+	leaq   _i(%rip), %rax
+	pushq   %rax
+	# push global variable's address(left value) i
+	# DEBUG: 0
 	popq    %rax
 	popq    %rcx
-	movq    %rcx, %rax
-	# u.id = i
-	movq    %rax, _i(%rip)
+	movq    %rcx, (%rax)
 	pushq   %rcx
 	addq    $8, %rsp
-	# child 1:AST_expression_long
+	# assign child 1:AST_expression_long
 	movq    $0x0, %rax
 	pushq   %rax
-	# child 0:AST_expression_id
-	# codegen_exp_id called
-	pushq   _sum(%rip)
-	# push global variable sum
+	# assign child 0:AST_expression_id
+	leaq   _sum(%rip), %rax
+	pushq   %rax
+	# push global variable's address(left value) sum
+	# DEBUG: 0
 	popq    %rax
 	popq    %rcx
-	movq    %rcx, %rax
-	# u.id = sum
-	movq    %rax, _sum(%rip)
+	movq    %rcx, (%rax)
 	pushq   %rcx
 	addq    $8, %rsp
 L_while_0:
 	# codegen_exp_id called
 	pushq   _i(%rip)
-	# push global variable i
+	# push global variable (right value) i
+	# DEBUG: 0
 	movq    $0x0, %rax
 	pushq   %rax
 	popq    %rax
@@ -74,7 +73,8 @@ L_while_0:
 	pushq   %r9
 	# codegen_exp_id called
 	pushq   _i(%rip)
-	# push global variable i
+	# push global variable (right value) i
+	# DEBUG: 0
 	leaq    L.XCC.STR0(%rip), %rax 	# "i = %ld\n"
 	pushq   %rax
 	# codegen_exp_id called
@@ -93,47 +93,48 @@ L_while_0:
 	popq   %rdi
 	pushq   %rax
 	addq    $8, %rsp
-	# child 1:AST_expression_add
+	# assign child 1:AST_expression_add
 	# codegen_exp_id called
 	pushq   _i(%rip)
-	# push global variable i
+	# push global variable (right value) i
+	# DEBUG: 0
 	# codegen_exp_id called
 	pushq   _sum(%rip)
-	# push global variable sum
+	# push global variable (right value) sum
+	# DEBUG: 0
 	popq    %rax
 	popq    %rdx
 	addq    %rdx, %rax
 	pushq   %rax
-	# child 0:AST_expression_id
-	# codegen_exp_id called
-	pushq   _sum(%rip)
-	# push global variable sum
+	# assign child 0:AST_expression_id
+	leaq   _sum(%rip), %rax
+	pushq   %rax
+	# push global variable's address(left value) sum
+	# DEBUG: 0
 	popq    %rax
 	popq    %rcx
-	movq    %rcx, %rax
-	# u.id = sum
-	movq    %rax, _sum(%rip)
+	movq    %rcx, (%rax)
 	pushq   %rcx
 	addq    $8, %rsp
-	# child 1:AST_expression_sub
+	# assign child 1:AST_expression_sub
 	movq    $0x1, %rax
 	pushq   %rax
 	# codegen_exp_id called
 	pushq   _i(%rip)
-	# push global variable i
+	# push global variable (right value) i
+	# DEBUG: 0
 	popq    %rax
 	popq    %rdx
 	subq    %rdx, %rax
 	pushq   %rax
-	# child 0:AST_expression_id
-	# codegen_exp_id called
-	pushq   _i(%rip)
-	# push global variable i
+	# assign child 0:AST_expression_id
+	leaq   _i(%rip), %rax
+	pushq   %rax
+	# push global variable's address(left value) i
+	# DEBUG: 0
 	popq    %rax
 	popq    %rcx
-	movq    %rcx, %rax
-	# u.id = i
-	movq    %rax, _i(%rip)
+	movq    %rcx, (%rax)
 	pushq   %rcx
 	addq    $8, %rsp
 	jmp     L_while_0
@@ -147,7 +148,8 @@ L_while_1:
 	pushq   %r9
 	# codegen_exp_id called
 	pushq   _sum(%rip)
-	# push global variable sum
+	# push global variable (right value) sum
+	# DEBUG: 0
 	leaq    L.XCC.STR1(%rip), %rax 	# "sum = %ld\n"
 	pushq   %rax
 	# codegen_exp_id called
