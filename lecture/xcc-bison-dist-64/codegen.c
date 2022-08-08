@@ -510,7 +510,20 @@ static void codegen_exp(struct AST *ast) {
          *  AST_expression_paren : 括弧
          */
         codegen_exp(ast->child[0]);
-    } else {
+    } else if(!strcmp(ast->ast_type, "AST_expression_opt_single")){
+        /*
+         *  AST_expression_opt_single : [expression] ;
+         *  return []; の部分のみがここに分類されるよう。 int i; や i = 0;などはここには分類されない。
+         */
+        printf("\t# AST_expression_opt_single:\n");
+        printf("\t# child num = %d\n", ast->num_child);
+        printf("\t# child[0]->ast_type = %s\n", ast->child[0]->ast_type);
+        printf("\t# child[0]->u.long_val = %ld\n", ast->child[0]->u.long_val);
+        
+        // そのまま処理を他のところに流してしまう方針(特別な処理がいる場合は変更必要)
+        codegen_exp(ast->child[0]);
+
+    }else {
         printf("codegen_exp: unknown ast_type: %s\n", ast->ast_type);
         assert(0);
     }
@@ -518,7 +531,7 @@ static void codegen_exp(struct AST *ast) {
 
 static void codegen_stmt(struct AST *ast_stmt) {
     /*
-     *  AST_statement_exp : expression
+     *  AST_statement_exp : expression_opt
      *  AST_statement_comp : compound statement
      *  AST_statement_if : if (条件) { 処理 }
      *  AST_statement_ifelse : if (条件) { 処理 } else { 処理 }
