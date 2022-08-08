@@ -577,21 +577,36 @@ static void codegen_exp(struct AST *ast) {
     } else if (!strcmp(ast->ast_type, "AST_expression_unary")) {
         /*
          *  AST_expression_unary : 単項演算子
+         *  AST_unary_operator_deref: *
+         *  AST_unary_operator_address: &
+         *
+         * ast->child[0] : AST_unary_operator_deref, AST_unary_operator_address : 単項演算子の子ノード & or *
+         * ast->child[1] : AST_expression_id
+         *
+         *  ここで処理されるのは 右辺値 の unary operator のみ
          */
-        codegen_exp(ast->child[0]);
+        printf("\t# AST_expression_unary: %d\n", ast->num_child);
+        printf("\t# AST_expression_unary: %s\n", ast->child[0]->ast_type);
+        printf("\t# AST_expression_unary: %s\n", ast->child[1]->ast_type);
 
-        emit_code(ast, "\tpopq    %%rax\n");
+        if (!strcmp(ast->child[0]->ast_type, "AST_unary_operator_deref")) {
+            /*
+             *  * 演算子
+             *  *( address )
+             * 5-codegen.pdf p.47 参照のこと
+             */
+            codegen_exp_id_address(ast->child[1]);
+            emit_code(ast, "\tpopq    %%rax\n");           // rax := address
+            emit_code(ast, "\tmovq    (%%rax), %%rax\n");  // rax := *(address)
+            emit_code(ast, "\tpushq   %%rax\n");
 
-        // -, ! に対応するものがないのでどう判断するか考え中
-        if (!strcmp(ast->child[0]->ast_type, "AST_expression_uminus")) {
-            emit_code(ast, "\tnegq    %%rax\n");
-        } else if (!strcmp(ast->child[0]->ast_type, "AST_expression_not")) {
-            emit_code(ast, "\tcmpl    $0, %%rax\n");
-            emit_code(ast, "\tsete    %s\n", ast->child[0]->u.id);
-            emit_code(ast, "\tmovzbq  %s, %%rax\n", ast->child[0]->u.id);
+        } else if (!strcmp(ast->child[0]->ast_type, "AST_unary_operator_address")) {
+            /*
+             *  & 演算子
+             */
+            codegen_exp_id_address(ast->child[1]);  // address を stack にpush
         }
 
-        emit_code(ast, "\tpushq   %%rax\n");
     } else if (!strcmp(ast->ast_type, "AST_expression_list")) {
         /*
          *  AST_expression_list : 配列要素参照
