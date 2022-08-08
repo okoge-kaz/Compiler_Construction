@@ -621,6 +621,7 @@ static void codegen_exp(struct AST *ast) {
         /*
          *  AST_expression_list : 配列要素参照
          */
+        printf("\t# AST_expression_list: num-child: %d\n", ast->num_child);
         codegen_exp(ast->child[0]);
         codegen_exp(ast->child[1]);
 
