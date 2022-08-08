@@ -644,6 +644,9 @@ static void codegen_exp(struct AST *ast) {
         /*
          *  AST_expression_paren : 括弧
          */
+        printf("\t# AST_expression_paren: num-child: %d\n", ast->num_child);
+        printf("\t# AST_expression_paren: child[0]: %s\n", ast->child[0]->ast_type);
+
         codegen_exp(ast->child[0]);
     } else if (!strcmp(ast->ast_type, "AST_expression_opt_single")) {
         /*
