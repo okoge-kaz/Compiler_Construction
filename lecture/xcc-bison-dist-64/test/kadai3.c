@@ -41,7 +41,6 @@ void make_array (long *data, long size, long seed)
 int main (int argc, char **argv)
 {
     long i; long *p; long size;
-    int sym_table_dump;
     size = atol (*(argv + 1));
     p = malloc (8 * size);
     make_array (p, size, 0);

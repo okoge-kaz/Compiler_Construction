@@ -1,8 +1,3 @@
-global:   main, make_array, bubble_sort, swap, mod, atol, random, srandom, malloc, printf, 
-arg:      argv, argc, 
-label:    
-string:   
-local[0]: size, p, i, 
 	.text
 	.globl  _mod
 	.p2align 4, 0x90
