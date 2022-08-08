@@ -119,8 +119,8 @@ static void codegen_exp_id_address(struct AST *ast) {
             offset = -(sym->offset + 8);
             printf("\t# DEBUG NS_LOCAL left value %s\n", sym->name);
             printf("\t# DEBUG NS_LOCAL left value %s\n", sym->type->id);
-            emit_code(ast, "leaq %d(%%rbp), %%rax\n", offset);
-            emit_code(ast, "pushq %%rax\n");
+            emit_code(ast, "\tleaq %d(%%rbp), %%rax\n", offset);
+            emit_code(ast, "\tpushq %%rax\n");
             // local 変数の address をスタックに積む
             break;
         case NS_ARG:
