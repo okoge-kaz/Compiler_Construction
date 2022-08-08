@@ -103,7 +103,7 @@ is_library_func(char *libname) {
 /* ---------------------------------------------------------------------- */
 // ここから下は好きに修正や拡張をしても構わない
 
-static void codegen_left_exp_id(struct AST *ast) {
+static void codegen_exp_id_address(struct AST *ast) {
     /*
      * 左辺値としてアドレスをスタックに積む
      * 基本構造は、 codegen_exp_id と同じである。
@@ -420,9 +420,9 @@ static void codegen_exp(struct AST *ast) {
         codegen_exp(ast->child[1]);  // 右辺 代入する値
 
         printf("\t# assign child 0:%s\n", ast->child[0]->ast_type);
-        codegen_left_exp_id(ast->child[0]);  // 左辺 代入先アドレス
+        codegen_exp_id_address(ast->child[0]);  // 左辺 代入先アドレス
 
-        emit_code(ast, "\tpopq    %%rax\n");           // rax := 代入先アドレス 
+        emit_code(ast, "\tpopq    %%rax\n");           // rax := 代入先アドレス
         emit_code(ast, "\tpopq    %%rcx\n");           // rcx := 代入する値
         emit_code(ast, "\tmovq    %%rcx, (%%rax)\n");  // *(rax) := 代入する値
 
