@@ -103,6 +103,103 @@ is_library_func(char *libname) {
 /* ---------------------------------------------------------------------- */
 // ここから下は好きに修正や拡張をしても構わない
 
+static void codegen_left_exp_id(struct AST *ast) {
+    /*
+     * 左辺値としてアドレスをスタックに積む
+     * 基本構造は、 codegen_exp_id と同じである。
+     */
+    int offset;
+    char *reg = "%reg";
+    struct Symbol *sym = sym_lookup(ast->child[0]->u.id);
+    assert(sym != NULL);
+
+    switch (sym->name_space) {
+        case NS_LOCAL:
+            /* local variable */
+            offset = -(sym->offset + 8);
+            printf("\t# DEBUG NS_LOCAL left value %s\n", sym->name);
+            printf("\t# DEBUG NS_LOCAL left value %s\n", sym->type->id);
+            emit_code(ast, "leaq %d(%%rbp), %%rax\n", offset);
+            emit_code(ast, "pushq %%rax\n");
+            // local 変数の address をスタックに積む
+            break;
+        case NS_ARG:
+            if (sym->name_space == NS_LOCAL) {
+                offset = -(sym->offset + 8);
+            } else if (sym->name_space == NS_ARG) {
+                if (sym->offset <= 40) {  // 1st-6th arguments
+                    offset = -(sym->offset + 8);
+                    switch (sym->offset) {
+                        case 0:
+                            reg = "%rdi";
+                            break;
+                        case 8:
+                            reg = "%rsi";
+                            break;
+                        case 16:
+                            reg = "%rdx";
+                            break;
+                        case 24:
+                            reg = "%rcx";
+                            break;
+                        case 32:
+                            reg = "%r8";
+                            break;
+                        case 40:
+                            reg = "%r9";
+                            break;
+                        default:
+                            assert(0);
+                            break;
+                    }
+                } else {  // 7th and subsequent arguments
+                    offset = sym->offset - 48 + 16;
+                }
+            } else {
+                assert(0);
+            }
+
+            if (!((sym->name_space == NS_ARG) && (sym->offset <= 40))) {  // other than 1st-6th arguments
+                // char型，int型には非対応
+                emit_code(ast, "\tmovq    %d(%%rbp), %%rax \t# %s, %d\n",
+                          offset, sym->name, sym->offset);
+            }
+            emit_code(ast, "\tpushq   %s\n", reg);
+            break;
+        case NS_GLOBAL:
+            /*
+             * グローバルスコープ
+             *
+             * TYPE_KIND_PRIM: Primitive Type (int, char, ...)
+             * TYPE_KIND_FUNCTION: 関数
+             * TYPE_KIND_POINTER: ポインタ
+             */
+            // char型，int型には非対応
+            if (sym->type->kind == TYPE_KIND_FUNCTION) {
+                if (is_library_func(sym->name)) {
+                    // ライブラリ関数
+                    emit_code(ast, "\tmovq    _%s@GOTPCREL(%%rip), %%rax\n", sym->name);
+                } else {
+                    // ユーザー定義関数
+                    emit_code(ast, "\tleaq    _%s(%%rip), %%rax\n", sym->name);
+                }
+                emit_code(ast, "\tpushq   %%rax\n");
+            } else {
+                // TYPE_KIND_PRIM, TYPE_KIND_POINTER
+                emit_code(ast, "\tleaq   _%s(%%rip), %%rax\n", sym->name);
+                emit_code(ast, "\tpushq   %%rax\n");
+                printf("\t# push global variable's address(left value) %s\n", sym->name);
+                printf("\t# DEBUG: %d\n", sym->type->kind);
+                // 帯域変数の左辺値 (アドレス) をスタックに積む
+            }
+            break;
+        case NS_LABEL: /* falling through */
+        default:
+            assert(0);
+            break;
+    }
+}
+
 static void codegen_exp_id(struct AST *ast) {
     int offset;
     char *reg = "%rax";
@@ -311,18 +408,16 @@ static void codegen_exp(struct AST *ast) {
          *  AST_expression_assign : = 代入
          *  以下のように 右辺 -> 左辺の順にするのは、スタックに積まれる値の順番を考えてのこと
          */
-        printf("\t# child 1:%s\n", ast->child[1]->ast_type);
+        printf("\t# assign child 1:%s\n", ast->child[1]->ast_type);
         codegen_exp(ast->child[1]);  // 右辺 代入する値
 
-        printf("\t# child 0:%s\n", ast->child[0]->ast_type);
-        codegen_exp(ast->child[0]);  // 左辺 代入先アドレス
+        printf("\t# assign child 0:%s\n", ast->child[0]->ast_type);
+        codegen_left_exp_id(ast->child[0]);  // 左辺 代入先アドレス
 
-        emit_code(ast, "\tpopq    %%rax\n");         // rax := 代入先アドレス 現状だと 代入先の値になっている
-        emit_code(ast, "\tpopq    %%rcx\n");         // rcx := 代入する値
-        emit_code(ast, "\tmovq    %%rcx, %%rax\n");  // これだけでは、代入ができていない
-        printf("\t# u.id = %s\n", ast->child[0]->child[0]->u.id);
-        emit_code(ast, "\tmovq    %%rax, _%s(%%rip)\n", ast->child[0]->child[0]->u.id);
-        // TODO: 5-codegen.pdf p.39 にあるように leaq を使ってアドレスを取得するように codegen_exp_id の動作を書き換えることも検討してみた方が良いかもしれない
+        emit_code(ast, "\tpopq    %%rax\n");           // rax := 代入先アドレス 
+        emit_code(ast, "\tpopq    %%rcx\n");           // rcx := 代入する値
+        emit_code(ast, "\tmovq    %%rcx, (%%rax)\n");  // *(rax) := 代入する値
+
         emit_code(ast, "\tpushq   %%rcx\n");
 
     } else if (!strcmp(ast->ast_type, "AST_expression_lor") ||
