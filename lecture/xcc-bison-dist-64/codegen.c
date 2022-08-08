@@ -157,20 +157,27 @@ static void codegen_exp_id(struct AST *ast) {
         case NS_GLOBAL:
             /*
              * グローバルスコープ
-             * 関数 or 関数以外かで場合分け
+             *
+             * TYPE_KIND_PRIM: Primitive Type (int, char, ...)
+             * TYPE_KIND_FUNCTION: 関数
+             * TYPE_KIND_POINTER: ポインタ
              */
             // char型，int型には非対応
             if (sym->type->kind == TYPE_KIND_FUNCTION) {
                 if (is_library_func(sym->name)) {
+                    // ライブラリ関数
                     emit_code(ast, "\tmovq    _%s@GOTPCREL(%%rip), %%rax\n", sym->name);
                 } else {
+                    // ユーザー定義関数
                     emit_code(ast, "\tleaq    _%s(%%rip), %%rax\n", sym->name);
                 }
                 emit_code(ast, "\tpushq   %%rax\n");
             } else {
-                // 関数以外 := グローバル変数
+                // TYPE_KIND_PRIM, TYPE_KIND_POINTER
                 emit_code(ast, "\tpushq   _%s(%%rip)\n", sym->name);
-                printf("\t# push global variable %s\n", sym->name);
+                printf("\t# push global variable (right value) %s\n", sym->name);
+                printf("\t# DEBUG: %d\n", sym->type->kind);
+                // 帯域変数の右辺値
             }
             break;
         case NS_LABEL: /* falling through */
