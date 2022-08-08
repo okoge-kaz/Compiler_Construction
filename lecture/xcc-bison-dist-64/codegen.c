@@ -434,8 +434,8 @@ static void codegen_exp(struct AST *ast) {
         or_label_id += 2;
         and_label_id += 2;
 
-        codegen_exp(ast->child[0]);                           // evaluate left value
-        printf("\t# child 0:%s\n", ast->child[0]->ast_type);  // left value abstract syntax tree's type
+        codegen_exp(ast->child[0]);                                  // evaluate left value
+        printf("\t# or and child 0:%s\n", ast->child[0]->ast_type);  // left value abstract syntax tree's type
 
         if (!strcmp(ast->ast_type, "AST_expression_lor")) {
             /*
