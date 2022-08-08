@@ -604,8 +604,7 @@ static void codegen_exp(struct AST *ast) {
              *  *( address )
              * 5-codegen.pdf p.47 参照のこと
              */
-            // TODO: 要検証
-            codegen_exp(ast->child[1]);// expression だけど address が計算されていると仮定
+            codegen_exp(ast->child[1]);                    // expression だけど address が計算されていると仮定
             emit_code(ast, "\tpopq    %%rax\n");           // rax := address
             emit_code(ast, "\tmovq    (%%rax), %%rax\n");  // rax := *(address)
             emit_code(ast, "\tpushq   %%rax\n");
