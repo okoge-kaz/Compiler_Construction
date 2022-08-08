@@ -750,20 +750,6 @@ static void codegen_stmt(struct AST *ast_stmt) {
         emit_code(ast_stmt, "\tjmp     L_while_%d\n", local_while_label_id);
         emit_code(ast_stmt, "L_while_%d:\n", local_while_label_id + 1);
 
-    } else if (!strcmp(ast_stmt->ast_type, "AST_statement_goto")) {
-        /*
-         *  AST_statement_goto : goto 文
-         */
-        emit_code(ast_stmt, "\tjmp     .L%d\n", ast_stmt->child[0]->u.id);
-        // TODO: ここを修正する必要がある
-
-    } else if (!strcmp(ast_stmt->ast_type, "AST_statement_label")) {
-        /*
-         *  AST_statement_label : goto 文の飛び先 Label
-         */
-        emit_code(ast_stmt, ".L%d:\n", ast_stmt->child[0]->u.id);
-        // TODO: Label の箇所を修正する必要がある
-
     } else if (!strcmp(ast_stmt->ast_type, "AST_statement_return")) {
         /*
          *  AST_statement_return : return 文
