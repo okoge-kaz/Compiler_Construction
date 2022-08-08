@@ -595,6 +595,7 @@ static void codegen_exp(struct AST *ast) {
              *  *( address )
              * 5-codegen.pdf p.47 参照のこと
              */
+            // TODO: 現在のままでは exp_id_address 以外は計算できないので、ここに () などがくるとエラーになる
             codegen_exp_id_address(ast->child[1]);
             emit_code(ast, "\tpopq    %%rax\n");           // rax := address
             emit_code(ast, "\tmovq    (%%rax), %%rax\n");  // rax := *(address)
@@ -617,7 +618,7 @@ static void codegen_exp(struct AST *ast) {
         emit_code(ast, "\tpopq    %%rcx\n");
         emit_code(ast, "\tpopq    %%rax\n");
 
-        // ここの処理の妥当性 未検証
+        // FIXME: ここの処理の妥当性 未検証
         emit_code(ast, "\tmovq    %%rcx, %%rdx\n");
         emit_code(ast, "\tmulq    $8, %%rdx\n");
         emit_code(ast, "\taddq    %%rdx, %%rax\n");
