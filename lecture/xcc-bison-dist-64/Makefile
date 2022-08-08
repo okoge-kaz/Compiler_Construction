@@ -59,5 +59,5 @@ test2-easy:
 
 test3:
 	make
-	sh test.sh kadai3
+	sh test_3.sh kadai3
 	make clean
