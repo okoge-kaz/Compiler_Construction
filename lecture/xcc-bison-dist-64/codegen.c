@@ -208,6 +208,13 @@ static void codegen_exp_id(struct AST *ast) {
 
     switch (sym->name_space) {
         case NS_LOCAL:
+            /* local variable */
+            offset = -(sym->offset + 8);
+            printf("\t# DEBUG NS_LOCAL right value %s\n", sym->name);
+            printf("\t# DEBUG NS_LOCAL right value %s\n", sym->type->id);
+            emit_code(ast, "\tpushq  %d(%%rbp)\n", offset);
+            // 右辺値 right value 形式なのでメモリの中身をスタックにpushする
+            break;
         case NS_ARG:
             if (sym->name_space == NS_LOCAL) {
                 offset = -(sym->offset + 8);
