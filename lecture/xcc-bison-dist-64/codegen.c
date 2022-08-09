@@ -748,7 +748,7 @@ static void codegen_exp(struct AST *ast) {
                     } else {
                         // if child[0] is pointer and child[1] is pointer -> ポインタ演算
                         if (ast->child[0]->type->kind == TYPE_KIND_POINTER && ast->child[1]->type->kind == TYPE_KIND_POINTER) {
-                            codegen_exp(ast->child[1]);          // right
+                            codegen_exp_address(ast->child[1]);          // right
                             codegen_exp_address(ast->child[0]);  // left
 
                             emit_code(ast, "\tpopq    %%rax\n");  // rax := left value
