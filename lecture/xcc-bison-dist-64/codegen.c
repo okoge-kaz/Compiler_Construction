@@ -232,6 +232,10 @@ static void codegen_exp_address(struct AST *ast) {
                 emit_code(ast, "\timulq  $8, %%rdx\n");         // rdx *= 8
                 emit_code(ast, "\taddq    %%rdx, %%rax\n");     // rax += rdx
                 ast->child[0]->type->kind = TYPE_KIND_POINTER;  // pointer + long :=> pointer
+            } else if (ast->child[0]->child[0]->type->kind == TYPE_KIND_PRIM && ast->child[0]->child[1]->type->kind == TYPE_KIND_PRIM) {
+                // 通常時と同じ計算になる long + long -> long
+                codegen_exp(ast->child[0]->child[0]);
+                ast->child[0]->type->kind = TYPE_KIND_PRIM;  // long + long :=> long
             } else {
                 fprintf(stderr, "codegen_exp_address: *(%d + %d)\n", ast->child[0]->child[0]->type->kind, ast->child[0]->child[1]->type->kind);
                 assert(0);
@@ -268,6 +272,10 @@ static void codegen_exp_address(struct AST *ast) {
                     emit_code(ast, "\tcqto\n");                  // sign extend
                     emit_code(ast, "\tidivq    %%r10\n");        // rax /= 8
                     ast->child[0]->type->kind = TYPE_KIND_PRIM;  // pointer - pointer :=> long
+                } else if (ast->child[0]->child[0]->type->kind == TYPE_KIND_PRIM && ast->child[0]->child[1]->type->kind == TYPE_KIND_PRIM) {
+                    // 通常時と同じ計算になる long - long -> long
+                    codegen_exp(ast->child[0]->child[0]);
+                    ast->child[0]->type->kind = TYPE_KIND_PRIM;  // long - long :=> long
                 } else {
                     fprintf(stderr, "codegen_exp_address: *(%d - %d)\n", ast->child[0]->child[0]->type->kind, ast->child[0]->child[1]->type->kind);
                     assert(0);
