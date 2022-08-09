@@ -668,23 +668,6 @@ static void codegen_exp(struct AST *ast) {
             codegen_exp_id_address(ast->child[1]);  // address を stack にpush
         }
 
-    } else if (!strcmp(ast->ast_type, "AST_expression_list")) {
-        /*
-         *  AST_expression_list : 配列要素参照
-         */
-        printf("\t# AST_expression_list: num-child: %d\n", ast->num_child);
-        codegen_exp(ast->child[0]);
-        codegen_exp(ast->child[1]);
-
-        emit_code(ast, "\tpopq    %%rcx\n");
-        emit_code(ast, "\tpopq    %%rax\n");
-
-        // FIXME: ここの処理の妥当性 未検証
-        emit_code(ast, "\tmovq    %%rcx, %%rdx\n");
-        emit_code(ast, "\tmulq    $8, %%rdx\n");
-        emit_code(ast, "\taddq    %%rdx, %%rax\n");
-
-        emit_code(ast, "\tpushq   %%rax\n");
     } else if (!strcmp(ast->ast_type, "AST_expression_funcall1") ||
                !strcmp(ast->ast_type, "AST_expression_funcall2")) {
         /*
