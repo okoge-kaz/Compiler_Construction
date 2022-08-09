@@ -200,6 +200,92 @@ static void codegen_exp_id_address(struct AST *ast) {
     }
 }
 
+static void codegen_exp_address(struct AST *ast) {
+    printf("\t# codegen_exp_address is called\n");
+    printf("\t# codegen_exp_address num_child: %d\n", ast->num_child);
+    if (!strcmp(ast->ast_type, "AST_expression_id")) {
+        codegen_exp_id_address(ast);
+    } else if (ast->num_child == 1) {
+        printf("\t# codegen_exp_address: *(%s)\n", ast->child[0]->ast_type);
+        if (!strcmp(ast->child[0]->ast_type, "AST_expression_id")) {
+            // *(id) のとき
+            codegen_exp_id_address(ast->child[0]);
+        } else if (!strcmp(ast->child[0]->ast_type, "AST_expression_paren")) {
+            // * (()) のとき
+            codegen_exp_address(ast->child[0]);
+        } else if (!strcmp(ast->child[0]->ast_type, "AST_expression_add")) {
+            // *(a + b) のとき
+            printf("\t# codegen_exp_address: *(a + b) : a := %s\n", ast->child[0]->child[0]->ast_type);
+            printf("\t# codegen_exp_address: *(a + b) : b := %s\n", ast->child[0]->child[1]->ast_type);
+
+            // スタックトップにある 2つのアドレスを取り出して、それらを足し合わせる
+            // ただしその際に場合分けが必要
+            if (ast->child[0]->child[0]->type->kind == TYPE_KIND_POINTER && ast->child[0]->child[1]->type->kind == TYPE_KIND_PRIM) {
+                // *(a + b) のとき
+                // a := pointer, b := long
+                // rax = rax + ( rdx * 8 )
+                codegen_exp_address(ast->child[0]->child[0]);  // a
+                codegen_exp(ast->child[0]->child[1]);          // b アドレスではなく 値をスタックに積む
+
+                emit_code(ast, "\tpopq    %%rdx\n");            // b : rdx (right value)
+                emit_code(ast, "\tpopq    %%rax\n");            // a : rax (left value's address)
+                emit_code(ast, "\timulq  $8, %%rdx\n");         // rdx *= 8
+                emit_code(ast, "\taddq    %%rdx, %%rax\n");     // rax += rdx
+                ast->child[0]->type->kind = TYPE_KIND_POINTER;  // pointer + long :=> pointer
+            } else {
+                fprintf(stderr, "codegen_exp_address: *(%d + %d)\n", ast->child[0]->child[0]->type->kind, ast->child[0]->child[1]->type->kind);
+                assert(0);
+            }
+
+        } else if (!strcmp(ast->child[0]->ast_type, "AST_expression_sub")) {
+            // *(a - b) のとき
+            printf("\t# codegen_exp_address: *(a - b) : a := %s\n", ast->child[0]->child[0]->ast_type);
+            printf("\t# codegen_exp_address: *(a - b) : b := %s\n", ast->child[0]->child[1]->ast_type);
+
+            codegen_exp_address(ast->child[0]->child[0]);
+            codegen_exp_address(ast->child[0]->child[1]);
+
+            // スタックトップにある 2つのアドレスを取り出して、それらを引き算する
+            // ただしその際に場合分けが必要
+            if (ast->child[0]->child[0]->type->kind == TYPE_KIND_POINTER && ast->child[0]->child[1]->type->kind == TYPE_KIND_PRIM) {
+                // *(a - b) のとき
+                // a := pointer, b := long
+                // rax = rax - ( rdx * 8 )
+                emit_code(ast, "\tpopq    %%rdx\n");            // b : rdx (right value)
+                emit_code(ast, "\tpopq    %%rax\n");            // a : rax (left value's address)
+                emit_code(ast, "\timulq  $8, %%rdx\n");         // rdx *= 8
+                emit_code(ast, "\tsubq    %%rdx, %%rax\n");     // rax -= rdx
+                ast->child[0]->type->kind = TYPE_KIND_POINTER;  // pointer - long :=> pointer
+            } else {
+                if (ast->child[0]->child[0]->type->kind == TYPE_KIND_POINTER && ast->child[0]->child[1]->type->kind == TYPE_KIND_POINTER) {
+                    // *(a - b) のとき
+                    // a := pointer, b := pointer
+                    // rax = (rax - rdx) / 8
+                    emit_code(ast, "\tpopq    %%rdx\n");         // b : rdx (right value's address)
+                    emit_code(ast, "\tpopq    %%rax\n");         // a : rax (left value's address)
+                    emit_code(ast, "\tsubq    %%rdx, %%rax\n");  // rax -= rdx (pointer address)
+                    emit_code(ast, "\tmovq    $8, %%r10\n");     // r10 := 8
+                    emit_code(ast, "\tcqto\n");                  // sign extend
+                    emit_code(ast, "\tidivq    %%r10\n");        // rax /= 8
+                    ast->child[0]->type->kind = TYPE_KIND_PRIM;  // pointer - pointer :=> long
+                } else {
+                    fprintf(stderr, "codegen_exp_address: *(%d - %d)\n", ast->child[0]->child[0]->type->kind, ast->child[0]->child[1]->type->kind);
+                    assert(0);
+                }
+            }
+
+        } else {
+            printf("\t# codegen_exp_address: *(%s)\n", ast->child[0]->ast_type);
+            assert(0);
+        }
+
+    } else {
+        printf("\t# codegen_exp_address: num_child%d\n", ast->child[0]->num_child);
+        printf("\t# codegen_exp_address: %s\n", ast->child[0]->ast_type);
+        assert(0);
+    }
+}
+
 static void codegen_exp_id(struct AST *ast) {
     int offset;
     char *reg = "%rax";
