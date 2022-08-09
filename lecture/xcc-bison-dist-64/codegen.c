@@ -543,6 +543,7 @@ static void codegen_exp(struct AST *ast) {
             if (ast->child[0]->type->kind == TYPE_KIND_PRIM && ast->child[1]->type->kind == TYPE_KIND_PRIM) {
                 emit_code(ast, "\taddq    %%rdx, %%rax\n");
             } else {
+                //  unary operator がない箇所でも pointer の演算は行われるため、ここは必要
                 // if child[0] is pointer and child[1] is long -> ポインタ演算
                 if (ast->child[0]->type->kind == TYPE_KIND_POINTER && ast->child[1]->type->kind == TYPE_KIND_PRIM) {
                     // rax = rax + rdx * sizeof(type of rax) (size of rax = 8)
@@ -570,6 +571,7 @@ static void codegen_exp(struct AST *ast) {
             if (ast->child[0]->type->kind == TYPE_KIND_PRIM && ast->child[1]->type->kind == TYPE_KIND_PRIM) {
                 emit_code(ast, "\tsubq    %%rdx, %%rax\n");
             } else {
+                //  unary operator がない箇所でも pointer の演算は行われるため、ここは必要
                 // if child[0] is pointer and child[1] is long -> ポインタ演算
                 if (ast->child[0]->type->kind == TYPE_KIND_POINTER && ast->child[1]->type->kind == TYPE_KIND_PRIM) {
                     // rax -= (rdx * sizeof(type of rdx)) (size of rax = 8)
