@@ -250,7 +250,8 @@ L_while_2:
 	popq    %rdx
 	addq    %rdx, %rax
 	pushq   %rax
-	# codegen_exp_id called
+	# codegen_exp_address is called
+	# codegen_exp_address num_child: 1
 	pushq   %rdi
 	popq    %rax
 	popq    %rdx
@@ -261,7 +262,8 @@ L_while_2:
 	# DEBUG NS_LOCAL right value j
 	# DEBUG NS_LOCAL right value j
 	pushq  -16(%rbp)
-	# codegen_exp_id called
+	# codegen_exp_address is called
+	# codegen_exp_address num_child: 1
 	pushq   %rdi
 	popq    %rax
 	popq    %rdx
