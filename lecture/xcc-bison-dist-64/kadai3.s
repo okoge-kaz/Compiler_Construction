@@ -183,7 +183,9 @@ L_while_2:
 	pushq   %rdi
 	popq    %rax
 	popq    %rdx
-	addq    %rdx, %rax
+	movq    %rax, %rcx
+	movq    %rdx, %rax
+	mulq    %rcx
 	pushq   %rax
 	popq    %rax
 	movq    (%rax), %rax
@@ -209,7 +211,9 @@ L_while_2:
 	pushq   %rdi
 	popq    %rax
 	popq    %rdx
-	addq    %rdx, %rax
+	movq    %rax, %rcx
+	movq    %rdx, %rax
+	mulq    %rcx
 	pushq   %rax
 	popq    %rax
 	movq    (%rax), %rax
@@ -246,7 +250,9 @@ L_while_2:
 	pushq   %rdi
 	popq    %rax
 	popq    %rdx
-	addq    %rdx, %rax
+	movq    %rax, %rcx
+	movq    %rdx, %rax
+	mulq    %rcx
 	pushq   %rax
 	# codegen_exp_id called
 	# DEBUG NS_LOCAL right value j
@@ -256,7 +262,9 @@ L_while_2:
 	pushq   %rdi
 	popq    %rax
 	popq    %rdx
-	addq    %rdx, %rax
+	movq    %rax, %rcx
+	movq    %rdx, %rax
+	mulq    %rcx
 	pushq   %rax
 	# codegen_exp_id called
 	leaq    _swap(%rip), %rax
@@ -455,7 +463,9 @@ L_while_4:
 	pushq   %rdi
 	popq    %rax
 	popq    %rdx
-	addq    %rdx, %rax
+	movq    %rax, %rcx
+	movq    %rdx, %rax
+	mulq    %rcx
 	pushq   %rax
 	popq    %rax
 	popq    %rcx
@@ -518,7 +528,9 @@ _main:
 	pushq   %rsi
 	popq    %rax
 	popq    %rdx
-	addq    %rdx, %rax
+	movq    %rax, %rcx
+	movq    %rdx, %rax
+	mulq    %rcx
 	pushq   %rax
 	popq    %rax
 	movq    (%rax), %rax
@@ -707,7 +719,9 @@ L_while_6:
 	pushq  -16(%rbp)
 	popq    %rax
 	popq    %rdx
-	addq    %rdx, %rax
+	movq    %rax, %rcx
+	movq    %rdx, %rax
+	mulq    %rcx
 	pushq   %rax
 	popq    %rax
 	movq    (%rax), %rax
