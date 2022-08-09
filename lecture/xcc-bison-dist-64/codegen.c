@@ -645,6 +645,7 @@ static void codegen_exp(struct AST *ast) {
             // if child[0] is long and child[1] is long -> 通常演算
             if (ast->child[0]->type->kind == TYPE_KIND_PRIM && ast->child[1]->type->kind == TYPE_KIND_PRIM) {
                 emit_code(ast, "\taddq    %%rdx, %%rax\n");
+                ast->type->kind = TYPE_KIND_PRIM;
             } else {
                 //  unary operator がない箇所でも pointer の演算は行われるため、ここは必要
                 // if child[0] is pointer and child[1] is long -> ポインタ演算
@@ -652,6 +653,7 @@ static void codegen_exp(struct AST *ast) {
                     // rax = rax + rdx * sizeof(type of rax) (size of rax = 8)
                     emit_code(ast, "\timulq   $8, %%rdx\n");     // rdx *= 8 (size of rax)
                     emit_code(ast, "\taddq    %%rdx, %%rax\n");  // rax += rdx
+                    ast->type->kind = TYPE_KIND_POINTER;         // pointer - long :=> pointer
 
                 } else {
                     // if child[0] is long and child[1] is pointer -> コンパイルエラー
@@ -673,6 +675,7 @@ static void codegen_exp(struct AST *ast) {
             // if child[0] is long and child[1] is long -> 通常演算
             if (ast->child[0]->type->kind == TYPE_KIND_PRIM && ast->child[1]->type->kind == TYPE_KIND_PRIM) {
                 emit_code(ast, "\tsubq    %%rdx, %%rax\n");
+                ast->type->kind = TYPE_KIND_PRIM;
             } else {
                 //  unary operator がない箇所でも pointer の演算は行われるため、ここは必要
                 // if child[0] is pointer and child[1] is long -> ポインタ演算
@@ -680,6 +683,7 @@ static void codegen_exp(struct AST *ast) {
                     // rax -= (rdx * sizeof(type of rdx)) (size of rax = 8)
                     emit_code(ast, "\timulq   $8, %%rdx\n");     // rdx *= 8 (size of rax)
                     emit_code(ast, "\tsubq    %%rdx, %%rax\n");  // rax -= rdx
+                    ast->type->kind = TYPE_KIND_POINTER;         // pointer - long :=> pointer
                 } else {
                     // if child[0] is long and child[1] is pointer -> コンパイルエラー
                     if (ast->child[0]->type->kind == TYPE_KIND_PRIM && ast->child[1]->type->kind == TYPE_KIND_POINTER) {
@@ -693,6 +697,7 @@ static void codegen_exp(struct AST *ast) {
                             emit_code(ast, "\tmovq    $8,  %%r10\n");    // r10 = 8
                             emit_code(ast, "\tcqto\n");                  // Sign Extend(R[%rax] -> R[%rdx:%rax])
                             emit_code(ast, "\tidivq   %%r10\n");         // rax = rax / 8
+                            ast->type->kind = TYPE_KIND_PRIM;            // pointer - pointer :=> long
 
                         } else {
                             // コンパイルエラー
