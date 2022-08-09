@@ -187,6 +187,7 @@ L_while_2:
 	popq    %rax
 	imulq  $8, %rdx
 	addq    %rdx, %rax
+	pushq   %rax
 	popq    %rax
 	movq    (%rax), %rax
 	pushq   %rax
@@ -217,6 +218,7 @@ L_while_2:
 	popq    %rax
 	imulq  $8, %rdx
 	addq    %rdx, %rax
+	pushq   %rax
 	popq    %rax
 	movq    (%rax), %rax
 	pushq   %rax
@@ -470,6 +472,7 @@ L_while_4:
 	popq    %rax
 	imulq  $8, %rdx
 	addq    %rdx, %rax
+	pushq   %rax
 	popq    %rax
 	popq    %rcx
 	movq    %rcx, (%rax)
@@ -537,6 +540,7 @@ _main:
 	popq    %rax
 	imulq  $8, %rdx
 	addq    %rdx, %rax
+	pushq   %rax
 	popq    %rax
 	movq    (%rax), %rax
 	pushq   %rax
@@ -731,6 +735,7 @@ L_while_6:
 	popq    %rax
 	imulq  $8, %rdx
 	addq    %rdx, %rax
+	pushq   %rax
 	popq    %rax
 	movq    (%rax), %rax
 	pushq   %rax
