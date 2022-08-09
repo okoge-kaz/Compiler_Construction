@@ -171,12 +171,52 @@ L_while_2:
 	# AST_expression_unary: num-child: 2
 	# AST_expression_unary: child[0]: AST_unary_operator_deref
 	# AST_expression_unary: child[1]: AST_expression_paren
+	# codegen_exp_address is called
+	# codegen_exp_address num_child: 1
+	# codegen_exp_address: *(AST_expression_add)
+	# codegen_exp_address: *(a + b) : a := AST_expression_id
+	# codegen_exp_address: *(a + b) : b := AST_expression_id
+	# codegen_exp_address is called
+	# codegen_exp_address num_child: 1
+	pushq   %rdi
+	# codegen_exp_id called
+	# DEBUG NS_LOCAL right value j
+	# DEBUG NS_LOCAL right value j
+	pushq  -16(%rbp)
+	popq    %rdx
+	popq    %rax
+	imulq  $8, %rdx
+	addq    %rdx, %rax
 	popq    %rax
 	movq    (%rax), %rax
 	pushq   %rax
 	# AST_expression_unary: num-child: 2
 	# AST_expression_unary: child[0]: AST_unary_operator_deref
 	# AST_expression_unary: child[1]: AST_expression_paren
+	# codegen_exp_address is called
+	# codegen_exp_address num_child: 1
+	# codegen_exp_address: *(AST_expression_add)
+	# codegen_exp_address: *(a + b) : a := AST_expression_id
+	# codegen_exp_address: *(a + b) : b := AST_expression_paren
+	# codegen_exp_address is called
+	# codegen_exp_address num_child: 1
+	pushq   %rdi
+	# AST_expression_paren: num-child: 1
+	# AST_expression_paren: child[0]: AST_expression_add
+	movq    $0x1, %rax
+	pushq   %rax
+	# codegen_exp_id called
+	# DEBUG NS_LOCAL right value j
+	# DEBUG NS_LOCAL right value j
+	pushq  -16(%rbp)
+	popq    %rax
+	popq    %rdx
+	addq    %rdx, %rax
+	pushq   %rax
+	popq    %rdx
+	popq    %rax
+	imulq  $8, %rdx
+	addq    %rdx, %rax
 	popq    %rax
 	movq    (%rax), %rax
 	pushq   %rax
@@ -414,6 +454,22 @@ L_while_4:
 	popq   %rdi
 	pushq   %rax
 	# assign unary operator child[1]:AST_expression_paren
+	# codegen_exp_address is called
+	# codegen_exp_address num_child: 1
+	# codegen_exp_address: *(AST_expression_add)
+	# codegen_exp_address: *(a + b) : a := AST_expression_id
+	# codegen_exp_address: *(a + b) : b := AST_expression_id
+	# codegen_exp_address is called
+	# codegen_exp_address num_child: 1
+	pushq   %rdi
+	# codegen_exp_id called
+	# DEBUG NS_LOCAL right value i
+	# DEBUG NS_LOCAL right value i
+	pushq  -8(%rbp)
+	popq    %rdx
+	popq    %rax
+	imulq  $8, %rdx
+	addq    %rdx, %rax
 	popq    %rax
 	popq    %rcx
 	movq    %rcx, (%rax)
@@ -467,6 +523,20 @@ _main:
 	# AST_expression_unary: num-child: 2
 	# AST_expression_unary: child[0]: AST_unary_operator_deref
 	# AST_expression_unary: child[1]: AST_expression_paren
+	# codegen_exp_address is called
+	# codegen_exp_address num_child: 1
+	# codegen_exp_address: *(AST_expression_add)
+	# codegen_exp_address: *(a + b) : a := AST_expression_id
+	# codegen_exp_address: *(a + b) : b := AST_expression_long
+	# codegen_exp_address is called
+	# codegen_exp_address num_child: 1
+	pushq   %rsi
+	movq    $0x1, %rax
+	pushq   %rax
+	popq    %rdx
+	popq    %rax
+	imulq  $8, %rdx
+	addq    %rdx, %rax
 	popq    %rax
 	movq    (%rax), %rax
 	pushq   %rax
@@ -642,6 +712,25 @@ L_while_6:
 	# AST_expression_unary: num-child: 2
 	# AST_expression_unary: child[0]: AST_unary_operator_deref
 	# AST_expression_unary: child[1]: AST_expression_paren
+	# codegen_exp_address is called
+	# codegen_exp_address num_child: 1
+	# codegen_exp_address: *(AST_expression_add)
+	# codegen_exp_address: *(a + b) : a := AST_expression_id
+	# codegen_exp_address: *(a + b) : b := AST_expression_id
+	# codegen_exp_address is called
+	# codegen_exp_address num_child: 1
+	# DEBUG NS_LOCAL left value p
+	# DEBUG NS_LOCAL left value p
+	leaq -16(%rbp), %rax
+	pushq %rax
+	# codegen_exp_id called
+	# DEBUG NS_LOCAL right value i
+	# DEBUG NS_LOCAL right value i
+	pushq  -8(%rbp)
+	popq    %rdx
+	popq    %rax
+	imulq  $8, %rdx
+	addq    %rdx, %rax
 	popq    %rax
 	movq    (%rax), %rax
 	pushq   %rax
