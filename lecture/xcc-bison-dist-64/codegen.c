@@ -224,7 +224,7 @@ static void codegen_exp_address(struct AST *ast) {
                 // *(a + b) のとき
                 // a := pointer, b := long
                 // rax = rax + ( rdx * 8 )
-                codegen_exp_address(ast->child[0]->child[0]);  // a
+                codegen_exp_address(ast->child[0]->child[0]);  // a address
                 codegen_exp(ast->child[0]->child[1]);          // b アドレスではなく 値をスタックに積む
 
                 emit_code(ast, "\tpopq    %%rdx\n");         // b : rdx (right value)
@@ -236,12 +236,12 @@ static void codegen_exp_address(struct AST *ast) {
                 ast->child[0]->type->kind = TYPE_KIND_POINTER;  // pointer + long :=> pointer
             } else if (ast->child[0]->child[0]->type->kind == TYPE_KIND_PRIM && ast->child[0]->child[1]->type->kind == TYPE_KIND_PRIM) {
                 // 通常時と同じ計算になる long + long -> long
-                codegen_exp(ast->child[0]->child[0]);
-                codegen_exp(ast->child[0]->child[1]);
+                codegen_exp(ast->child[0]->child[0]);// a left value
+                codegen_exp(ast->child[0]->child[1]);// b right value
 
-                emit_code(ast, "\tpopq    %%rdx\n");
-                emit_code(ast, "\tpopq    %%rax\n");
-                emit_code(ast, "\taddq    %%rdx, %%rax\n");
+                emit_code(ast, "\tpopq    %%rdx\n");// b : rdx (right value)
+                emit_code(ast, "\tpopq    %%rax\n");// a : rax (left value)
+                emit_code(ast, "\taddq    %%rdx, %%rax\n");// rax += rdx : left value += right value
                 emit_code(ast, "\tpushq   %%rax\n");
 
                 ast->child[0]->type->kind = TYPE_KIND_PRIM;  // long + long :=> long
@@ -848,7 +848,7 @@ static void codegen_exp(struct AST *ast) {
             /*
              *  & 演算子
              */
-            codegen_exp_id_address(ast->child[1]);  // address を stack にpush
+            codegen_exp_address(ast->child[1]);  // address を stack にpush
         }
 
     } else if (!strcmp(ast->ast_type, "AST_expression_funcall1") ||
