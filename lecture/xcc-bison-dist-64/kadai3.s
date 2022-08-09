@@ -50,7 +50,6 @@ _swap:
 	# AST_expression_unary: num-child: 2
 	# AST_expression_unary: child[0]: AST_unary_operator_deref
 	# AST_expression_unary: child[1]: AST_expression_id
-	# codegen_exp_id called
 	pushq   %rdi
 	popq    %rax
 	movq    (%rax), %rax
@@ -69,12 +68,11 @@ _swap:
 	# AST_expression_unary: num-child: 2
 	# AST_expression_unary: child[0]: AST_unary_operator_deref
 	# AST_expression_unary: child[1]: AST_expression_id
-	# codegen_exp_id called
 	pushq   %rsi
 	popq    %rax
 	movq    (%rax), %rax
 	pushq   %rax
-	# codegen_exp_id called
+	# assign unary operator child[1]:AST_expression_id
 	pushq   %rdi
 	popq    %rax
 	popq    %rcx
@@ -86,7 +84,7 @@ _swap:
 	# DEBUG NS_LOCAL right value tmp
 	# DEBUG NS_LOCAL right value tmp
 	pushq  -8(%rbp)
-	# codegen_exp_id called
+	# assign unary operator child[1]:AST_expression_id
 	pushq   %rsi
 	popq    %rax
 	popq    %rcx
@@ -173,48 +171,12 @@ L_while_2:
 	# AST_expression_unary: num-child: 2
 	# AST_expression_unary: child[0]: AST_unary_operator_deref
 	# AST_expression_unary: child[1]: AST_expression_paren
-	# AST_expression_paren: num-child: 1
-	# AST_expression_paren: child[0]: AST_expression_add
-	# codegen_exp_id called
-	# DEBUG NS_LOCAL right value j
-	# DEBUG NS_LOCAL right value j
-	pushq  -16(%rbp)
-	# codegen_exp_id called
-	pushq   %rdi
-	popq    %rax
-	popq    %rdx
-	movq    %rax, %rcx
-	movq    %rdx, %rax
-	mulq    %rcx
-	pushq   %rax
 	popq    %rax
 	movq    (%rax), %rax
 	pushq   %rax
 	# AST_expression_unary: num-child: 2
 	# AST_expression_unary: child[0]: AST_unary_operator_deref
 	# AST_expression_unary: child[1]: AST_expression_paren
-	# AST_expression_paren: num-child: 1
-	# AST_expression_paren: child[0]: AST_expression_add
-	# AST_expression_paren: num-child: 1
-	# AST_expression_paren: child[0]: AST_expression_add
-	movq    $0x1, %rax
-	pushq   %rax
-	# codegen_exp_id called
-	# DEBUG NS_LOCAL right value j
-	# DEBUG NS_LOCAL right value j
-	pushq  -16(%rbp)
-	popq    %rax
-	popq    %rdx
-	addq    %rdx, %rax
-	pushq   %rax
-	# codegen_exp_id called
-	pushq   %rdi
-	popq    %rax
-	popq    %rdx
-	movq    %rax, %rcx
-	movq    %rdx, %rax
-	mulq    %rcx
-	pushq   %rax
 	popq    %rax
 	movq    (%rax), %rax
 	pushq   %rax
@@ -250,9 +212,8 @@ L_while_2:
 	pushq   %rdi
 	popq    %rax
 	popq    %rdx
-	movq    %rax, %rcx
-	movq    %rdx, %rax
-	mulq    %rcx
+	imulq   $8, %rdx
+	addq    %rdx, %rax
 	pushq   %rax
 	# codegen_exp_id called
 	# DEBUG NS_LOCAL right value j
@@ -262,9 +223,8 @@ L_while_2:
 	pushq   %rdi
 	popq    %rax
 	popq    %rdx
-	movq    %rax, %rcx
-	movq    %rdx, %rax
-	mulq    %rcx
+	imulq   $8, %rdx
+	addq    %rdx, %rax
 	pushq   %rax
 	# codegen_exp_id called
 	leaq    _swap(%rip), %rax
@@ -453,20 +413,7 @@ L_while_4:
 	popq   %rsi
 	popq   %rdi
 	pushq   %rax
-	# AST_expression_paren: num-child: 1
-	# AST_expression_paren: child[0]: AST_expression_add
-	# codegen_exp_id called
-	# DEBUG NS_LOCAL right value i
-	# DEBUG NS_LOCAL right value i
-	pushq  -8(%rbp)
-	# codegen_exp_id called
-	pushq   %rdi
-	popq    %rax
-	popq    %rdx
-	movq    %rax, %rcx
-	movq    %rdx, %rax
-	mulq    %rcx
-	pushq   %rax
+	# assign unary operator child[1]:AST_expression_paren
 	popq    %rax
 	popq    %rcx
 	movq    %rcx, (%rax)
@@ -520,18 +467,6 @@ _main:
 	# AST_expression_unary: num-child: 2
 	# AST_expression_unary: child[0]: AST_unary_operator_deref
 	# AST_expression_unary: child[1]: AST_expression_paren
-	# AST_expression_paren: num-child: 1
-	# AST_expression_paren: child[0]: AST_expression_add
-	movq    $0x1, %rax
-	pushq   %rax
-	# codegen_exp_id called
-	pushq   %rsi
-	popq    %rax
-	popq    %rdx
-	movq    %rax, %rcx
-	movq    %rdx, %rax
-	mulq    %rcx
-	pushq   %rax
 	popq    %rax
 	movq    (%rax), %rax
 	pushq   %rax
@@ -707,22 +642,6 @@ L_while_6:
 	# AST_expression_unary: num-child: 2
 	# AST_expression_unary: child[0]: AST_unary_operator_deref
 	# AST_expression_unary: child[1]: AST_expression_paren
-	# AST_expression_paren: num-child: 1
-	# AST_expression_paren: child[0]: AST_expression_add
-	# codegen_exp_id called
-	# DEBUG NS_LOCAL right value i
-	# DEBUG NS_LOCAL right value i
-	pushq  -8(%rbp)
-	# codegen_exp_id called
-	# DEBUG NS_LOCAL right value p
-	# DEBUG NS_LOCAL right value p
-	pushq  -16(%rbp)
-	popq    %rax
-	popq    %rdx
-	movq    %rax, %rcx
-	movq    %rdx, %rax
-	mulq    %rcx
-	pushq   %rax
 	popq    %rax
 	movq    (%rax), %rax
 	pushq   %rax
