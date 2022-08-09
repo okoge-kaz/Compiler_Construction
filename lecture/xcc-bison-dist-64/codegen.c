@@ -425,7 +425,24 @@ static void codegen_exp(struct AST *ast) {
              * ast->child[0]->child[0] := AST_unary_operator_deref
              * ast->child[0]->child[1] := AST_expression_id
              */
-            codegen_exp(ast->child[0]->child[1]);
+            printf("\t# assign unary operator child[1]:%s\n", ast->child[0]->child[1]->ast_type);
+            if (!strcmp(ast->child[0]->child[1]->ast_type, "AST_expression_id")) {
+                /*
+                 * *( 変数名 address )
+                 */
+                codegen_exp_id_address(ast->child[0]->child[1]);
+            } else if (!strcmp(ast->child[0]->child[1]->ast_type, "AST_expression_paren")) {
+                /*
+                 * * ( i + j ) : ()の中で演算処理がある
+                 *  アドレス計算専用の codegen を呼び出す
+                 */
+                codegen_exp_address(ast->child[0]->child[1]);
+
+            } else {
+                fprintf(stderr, "codegen_exp_assign: unary operator child[1] is not AST_expression_id or AST_expression_paren %s\n", ast->child[0]->child[1]->ast_type);
+                assert(0);
+            }
+
         } else {
             printf("\t# assign child 0:%s\n", ast->child[0]->ast_type);
             codegen_exp_id_address(ast->child[0]);  // 左辺 代入先アドレス
@@ -657,7 +674,18 @@ static void codegen_exp(struct AST *ast) {
              *  *( address )
              * 5-codegen.pdf p.47 参照のこと
              */
-            codegen_exp(ast->child[1]);                    // expression だけど address が計算されていると仮定
+            if (!strcmp(ast->child[1]->ast_type, "AST_expression_id")) {
+                // * ( 変数名 ) の場合 -> 変数名のアドレスを rax に格納するだけでよい
+                codegen_exp_id_address(ast->child[1]);
+
+            } else if (!strcmp(ast->child[1]->ast_type, "AST_expression_paren")) {
+                // * ( i + j ) のように () で囲まれた演算があるとき
+                // アドレス計算専用の codegen を呼び出す
+                codegen_exp_address(ast->child[1]);
+            } else {
+                fprintf(stderr, "Error: unary_operator_deref %s\n", ast->child[1]->ast_type);
+                exit(1);
+            }
             emit_code(ast, "\tpopq    %%rax\n");           // rax := address
             emit_code(ast, "\tmovq    (%%rax), %%rax\n");  // rax := *(address)
             emit_code(ast, "\tpushq   %%rax\n");
