@@ -539,12 +539,36 @@ static void codegen_exp(struct AST *ast) {
              *  + 演算子
              *  %rax += %rdx
              */
-            emit_code(ast, "\taddq    %%rdx, %%rax\n");
+            // if child[0] is long and child[1] is long -> 通常演算
+            if (ast->child[0]->type->kind == TYPE_KIND_PRIM && ast->child[1]->type->kind == TYPE_KIND_PRIM) {
+                emit_code(ast, "\taddq    %%rdx, %%rax\n");
+            } else {
+                // if child[0] is pointer and child[1] is long -> ポインタ演算
+                if (ast->child[0]->type->kind == TYPE_KIND_POINTER && ast->child[1]->type->kind == TYPE_KIND_PRIM) {
+                    // rax = rax + rdx * sizeof(type of rax) (size of rax = 8)
+                    emit_code(ast, "\tmovq    %%rax, %%rcx\n");
+                    emit_code(ast, "\tmovq    %%rdx, %%rax\n");
+                    emit_code(ast, "\tmulq    %%rcx\n");
+
+                } else {
+                    // if child[0] is long and child[1] is pointer -> コンパイルエラー
+                    if (ast->child[0]->type->kind == TYPE_KIND_PRIM && ast->child[1]->type->kind == TYPE_KIND_POINTER) {
+                        fprintf(stderr, "Error: cannot add long and pointer\n");
+                        exit(1);
+                    } else {
+                        // if child[0] is pointer and child[1] is pointer -> コンパイルエラー
+                        fprintf(stderr, "Error: cannot add pointer and pointer\n");
+                        exit(1);
+                    }
+                }
+            }
 
         } else {
             /*
              *  - 演算子
              */
+            // if child[0] is long and child[1] is long -> 通常演算
+            if (ast->child[0]->type->kind == TYPE_KIND_PRIM && ast->child[1]->type->kind == TYPE_KIND_PRIM) {
             emit_code(ast, "\tsubq    %%rdx, %%rax\n");
             } else {
                 // if child[0] is pointer and child[1] is long -> ポインタ演算
@@ -562,10 +586,10 @@ static void codegen_exp(struct AST *ast) {
                         // if child[0] is pointer and child[1] is pointer -> ポインタ演算
                         if (ast->child[0]->type->kind == TYPE_KIND_POINTER && ast->child[1]->type->kind == TYPE_KIND_POINTER) {
                             // rax = (rax - rdx) / sizeof(type of rdx)
-                            emit_code(ast, "\tsubq    %%rdx, %%rax\n");// rax = rax - rdx
-                            emit_code(ast, "\tmovq    %%rax, %%rcx\n");// rcx = rax
-                            emit_code(ast, "\tmovq    %%rdx, %%rax\n");// rax = rdx
-                            emit_code(ast, "\tdivq    %%rcx\n");// rax = rax / rdx
+                            emit_code(ast, "\tsubq    %%rdx, %%rax\n");  // rax = rax - rdx
+                            emit_code(ast, "\tmovq    %%rax, %%rcx\n");  // rcx = rax
+                            emit_code(ast, "\tmovq    %%rdx, %%rax\n");  // rax = rdx
+                            emit_code(ast, "\tdivq    %%rcx\n");         // rax = rax / rdx
                         } else {
                             // コンパイルエラー
                             fprintf(stderr, "Error: cannot subtract pointer and pointer\n");
