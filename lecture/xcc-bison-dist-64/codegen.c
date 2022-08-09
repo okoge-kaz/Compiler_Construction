@@ -572,10 +572,9 @@ static void codegen_exp(struct AST *ast) {
             } else {
                 // if child[0] is pointer and child[1] is long -> ポインタ演算
                 if (ast->child[0]->type->kind == TYPE_KIND_POINTER && ast->child[1]->type->kind == TYPE_KIND_PRIM) {
-                    // rax -= (rdx * sizeof(type of rdx))
-                    emit_code(ast, "\tmovq    %%rdx, %%rcx\n");
-                    emit_code(ast, "\tmulq    %%rcx\n");
-                    emit_code(ast, "\tsubq    %%rax, %%rax\n");
+                    // rax -= (rdx * sizeof(type of rdx)) (size of rax = 8)
+                    emit_code(ast, "\timulq   $8, %%rdx\n");     // rdx *= 8 (size of rax)
+                    emit_code(ast, "\tsubq    %%rdx, %%rax\n");  // rax -= rdx
                 } else {
                     // if child[0] is long and child[1] is pointer -> コンパイルエラー
                     if (ast->child[0]->type->kind == TYPE_KIND_PRIM && ast->child[1]->type->kind == TYPE_KIND_POINTER) {
@@ -586,9 +585,10 @@ static void codegen_exp(struct AST *ast) {
                         if (ast->child[0]->type->kind == TYPE_KIND_POINTER && ast->child[1]->type->kind == TYPE_KIND_POINTER) {
                             // rax = (rax - rdx) / sizeof(type of rdx)
                             emit_code(ast, "\tsubq    %%rdx, %%rax\n");  // rax = rax - rdx
-                            emit_code(ast, "\tmovq    %%rax, %%rcx\n");  // rcx = rax
-                            emit_code(ast, "\tmovq    %%rdx, %%rax\n");  // rax = rdx
-                            emit_code(ast, "\tdivq    %%rcx\n");         // rax = rax / rdx
+                            emit_code(ast, "\tmovq    $8,  %%r10\n");    // r10 = 8
+                            emit_code(ast, "\tcqto\n");                  // Sign Extend(R[%rax] -> R[%rdx:%rax])
+                            emit_code(ast, "\tidivq   %%r10\n");         // rax = rax / 8
+
                         } else {
                             // コンパイルエラー
                             fprintf(stderr, "Error: cannot subtract pointer and pointer\n");
