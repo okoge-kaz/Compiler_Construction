@@ -546,9 +546,8 @@ static void codegen_exp(struct AST *ast) {
                 // if child[0] is pointer and child[1] is long -> ポインタ演算
                 if (ast->child[0]->type->kind == TYPE_KIND_POINTER && ast->child[1]->type->kind == TYPE_KIND_PRIM) {
                     // rax = rax + rdx * sizeof(type of rax) (size of rax = 8)
-                    emit_code(ast, "\tmovq    %%rax, %%rcx\n");
-                    emit_code(ast, "\tmovq    %%rdx, %%rax\n");
-                    emit_code(ast, "\tmulq    %%rcx\n");
+                    emit_code(ast, "\timulq   $8, %%rdx\n");     // rdx *= 8 (size of rax)
+                    emit_code(ast, "\taddq    %%rdx, %%rax\n");  // rax += rdx
 
                 } else {
                     // if child[0] is long and child[1] is pointer -> コンパイルエラー
