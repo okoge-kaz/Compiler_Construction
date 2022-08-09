@@ -569,7 +569,7 @@ static void codegen_exp(struct AST *ast) {
              */
             // if child[0] is long and child[1] is long -> 通常演算
             if (ast->child[0]->type->kind == TYPE_KIND_PRIM && ast->child[1]->type->kind == TYPE_KIND_PRIM) {
-            emit_code(ast, "\tsubq    %%rdx, %%rax\n");
+                emit_code(ast, "\tsubq    %%rdx, %%rax\n");
             } else {
                 // if child[0] is pointer and child[1] is long -> ポインタ演算
                 if (ast->child[0]->type->kind == TYPE_KIND_POINTER && ast->child[1]->type->kind == TYPE_KIND_PRIM) {
