@@ -682,6 +682,7 @@ static void codegen_exp(struct AST *ast) {
                 // * ( i + j ) のように () で囲まれた演算があるとき
                 // アドレス計算専用の codegen を呼び出す
                 codegen_exp_address(ast->child[1]);
+
             } else {
                 fprintf(stderr, "Error: unary_operator_deref %s\n", ast->child[1]->ast_type);
                 exit(1);
