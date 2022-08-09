@@ -546,6 +546,34 @@ static void codegen_exp(struct AST *ast) {
              *  - 演算子
              */
             emit_code(ast, "\tsubq    %%rdx, %%rax\n");
+            } else {
+                // if child[0] is pointer and child[1] is long -> ポインタ演算
+                if (ast->child[0]->type->kind == TYPE_KIND_POINTER && ast->child[1]->type->kind == TYPE_KIND_PRIM) {
+                    // rax -= (rdx * sizeof(type of rdx))
+                    emit_code(ast, "\tmovq    %%rdx, %%rcx\n");
+                    emit_code(ast, "\tmulq    %%rcx\n");
+                    emit_code(ast, "\tsubq    %%rax, %%rax\n");
+                } else {
+                    // if child[0] is long and child[1] is pointer -> コンパイルエラー
+                    if (ast->child[0]->type->kind == TYPE_KIND_PRIM && ast->child[1]->type->kind == TYPE_KIND_POINTER) {
+                        fprintf(stderr, "Error: cannot subtract long and pointer\n");
+                        exit(1);
+                    } else {
+                        // if child[0] is pointer and child[1] is pointer -> ポインタ演算
+                        if (ast->child[0]->type->kind == TYPE_KIND_POINTER && ast->child[1]->type->kind == TYPE_KIND_POINTER) {
+                            // rax = (rax - rdx) / sizeof(type of rdx)
+                            emit_code(ast, "\tsubq    %%rdx, %%rax\n");// rax = rax - rdx
+                            emit_code(ast, "\tmovq    %%rax, %%rcx\n");// rcx = rax
+                            emit_code(ast, "\tmovq    %%rdx, %%rax\n");// rax = rdx
+                            emit_code(ast, "\tdivq    %%rcx\n");// rax = rax / rdx
+                        } else {
+                            // コンパイルエラー
+                            fprintf(stderr, "Error: cannot subtract pointer and pointer\n");
+                            exit(1);
+                        }
+                    }
+                }
+            }
         }
 
         emit_code(ast, "\tpushq   %%rax\n");
