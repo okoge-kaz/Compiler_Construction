@@ -654,16 +654,17 @@ static void codegen_exp(struct AST *ast) {
          * 方針としてはスタック機械としての振る舞いを実装する。
          * まず 2回 pop する -> 演算ごとに分岐 -> 演算 -> 結果を push する
          */
-        codegen_exp(ast->child[1]);  // right
-        codegen_exp(ast->child[0]);  // left
-
-        emit_code(ast, "\tpopq    %%rax\n");  // rax := left value
-        emit_code(ast, "\tpopq    %%rdx\n");  // rdx := right value
 
         if (!strcmp(ast->ast_type, "AST_expression_less")) {
             /*
              *  < 比較演算子
              */
+            codegen_exp(ast->child[1]);  // right
+            codegen_exp(ast->child[0]);  // left
+
+            emit_code(ast, "\tpopq    %%rax\n");  // rax := left value
+            emit_code(ast, "\tpopq    %%rdx\n");  // rdx := right value
+
             emit_code(ast, "\tcmpq    %%rdx, %%rax\n");  // rax < rdx ? 1 : 0
             emit_code(ast, "\tsetl    %%al\n");          // al := rax < rdx ? 1 : 0
             emit_code(ast, "\tmovzbq  %%al, %%rax\n");   // rax := rax < rdx ? 1 : 0
@@ -675,12 +676,24 @@ static void codegen_exp(struct AST *ast) {
              */
             // if child[0] is long and child[1] is long -> 通常演算
             if (ast->child[0]->type->kind == TYPE_KIND_PRIM && ast->child[1]->type->kind == TYPE_KIND_PRIM) {
+                codegen_exp(ast->child[1]);  // right
+                codegen_exp(ast->child[0]);  // left
+
+                emit_code(ast, "\tpopq    %%rax\n");  // rax := left value
+                emit_code(ast, "\tpopq    %%rdx\n");  // rdx := right value
+
                 emit_code(ast, "\taddq    %%rdx, %%rax\n");
                 ast->type->kind = TYPE_KIND_PRIM;
             } else {
                 //  unary operator がない箇所でも pointer の演算は行われるため、ここは必要
                 // if child[0] is pointer and child[1] is long -> ポインタ演算
                 if (ast->child[0]->type->kind == TYPE_KIND_POINTER && ast->child[1]->type->kind == TYPE_KIND_PRIM) {
+                    codegen_exp(ast->child[1]);          // right
+                    codegen_exp_address(ast->child[0]);  // left
+
+                    emit_code(ast, "\tpopq    %%rax\n");  // rax := left value
+                    emit_code(ast, "\tpopq    %%rdx\n");  // rdx := right value
+
                     // rax = rax + rdx * sizeof(type of rax) (size of rax = 8)
                     emit_code(ast, "\timulq   $8, %%rdx\n");     // rdx *= 8 (size of rax)
                     emit_code(ast, "\taddq    %%rdx, %%rax\n");  // rax += rdx
@@ -705,12 +718,24 @@ static void codegen_exp(struct AST *ast) {
              */
             // if child[0] is long and child[1] is long -> 通常演算
             if (ast->child[0]->type->kind == TYPE_KIND_PRIM && ast->child[1]->type->kind == TYPE_KIND_PRIM) {
+                codegen_exp(ast->child[1]);  // right
+                codegen_exp(ast->child[0]);  // left
+
+                emit_code(ast, "\tpopq    %%rax\n");  // rax := left value
+                emit_code(ast, "\tpopq    %%rdx\n");  // rdx := right value
+
                 emit_code(ast, "\tsubq    %%rdx, %%rax\n");
                 ast->type->kind = TYPE_KIND_PRIM;
             } else {
                 //  unary operator がない箇所でも pointer の演算は行われるため、ここは必要
                 // if child[0] is pointer and child[1] is long -> ポインタ演算
                 if (ast->child[0]->type->kind == TYPE_KIND_POINTER && ast->child[1]->type->kind == TYPE_KIND_PRIM) {
+                    codegen_exp(ast->child[1]);          // right
+                    codegen_exp_address(ast->child[0]);  // left
+
+                    emit_code(ast, "\tpopq    %%rax\n");  // rax := left value
+                    emit_code(ast, "\tpopq    %%rdx\n");  // rdx := right value
+
                     // rax -= (rdx * sizeof(type of rdx)) (size of rax = 8)
                     emit_code(ast, "\timulq   $8, %%rdx\n");     // rdx *= 8 (size of rax)
                     emit_code(ast, "\tsubq    %%rdx, %%rax\n");  // rax -= rdx
@@ -723,6 +748,12 @@ static void codegen_exp(struct AST *ast) {
                     } else {
                         // if child[0] is pointer and child[1] is pointer -> ポインタ演算
                         if (ast->child[0]->type->kind == TYPE_KIND_POINTER && ast->child[1]->type->kind == TYPE_KIND_POINTER) {
+                            codegen_exp(ast->child[1]);          // right
+                            codegen_exp_address(ast->child[0]);  // left
+
+                            emit_code(ast, "\tpopq    %%rax\n");  // rax := left value
+                            emit_code(ast, "\tpopq    %%rdx\n");  // rdx := right value
+
                             // rax = (rax - rdx) / sizeof(type of rdx)
                             emit_code(ast, "\tsubq    %%rdx, %%rax\n");  // rax = rax - rdx
                             emit_code(ast, "\tmovq    $8,  %%r10\n");    // r10 = 8
